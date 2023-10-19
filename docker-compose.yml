@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  mysql:
+    image: 'mysql:latest'
+    container_name: mysql
+    volumes:
+      - ./pkg/configs/sql:/docker-entrypoint-initdb.d
+    ports:
+      - "18000:3306"
+    networks:
+      - default
+    environment:
+      - MYSQL_DATABASE=fusion_db
+      - MYSQL_USER=gorm
+      - MYSQL_PASSWORD=gorm
+      - MYSQL_RANDOM_ROOT_PASSWORD="yes"
+    restart: always
+    profiles:
+      - dev
+
+  etcd:
+    image: 'quay.io/coreos/etcd:v3.5.9'
+    container_name: etcd
+    restart: always
+    ports:
+      - 2379:2379
+    networks:
+      - default
+    environment:
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCDCTL_API=3
+    profiles:
+        - dev
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "18003:6379"
+    volumes:
+      - ./pkg/configs/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./pkg/data/redis/:/data
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: always
+    profiles:
+      - dev
