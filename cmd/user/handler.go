@@ -28,7 +28,8 @@ func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.UserInfoReques
 
 // UserProfileInfo implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserProfileInfo(ctx context.Context, req *user.UserProfileInfoRequest) (resp *user.UserProfileInfoResponse, err error) {
-  // TODO: Your code here...
+  resp = new(user.UserProfileInfoResponse)
+
   return
 }
 
