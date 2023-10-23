@@ -3,7 +3,7 @@
 package router
 
 import (
-	api "Fusion/cmd/api/biz/router/api"
+	api "github.com/Yra-A/Fusion_Go/cmd/api/biz/router/api"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

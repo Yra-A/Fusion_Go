@@ -56,6 +56,16 @@ func _userinfoMw() []app.HandlerFunc {
 	return nil
 }
 
+func _uploadMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _userinfouploadMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
 func _loginMw() []app.HandlerFunc {
 	// your code...
 	return nil
@@ -76,7 +86,7 @@ func _userprofileinfoMw() []app.HandlerFunc {
 	return nil
 }
 
-func _uploadMw() []app.HandlerFunc {
+func _upload0Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

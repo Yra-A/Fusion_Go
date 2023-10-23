@@ -2,10 +2,13 @@ namespace go user
 
 struct UserInfo {
     1: i32 user_id,
-    2: string nickname,
-    3: string realname,
-    4: i32 contest_favorite_count,
-    5: string avatar_url,
+    2: i32 gender,
+    3: string nickname,
+    4: string realname,
+    5: i32 contest_favorite_count,
+    6: string avatar_url,
+    7: i32 enrollment_year,
+    8: string college,
 }
 
 struct UserProfileInfo {
@@ -18,32 +21,35 @@ struct UserProfileInfo {
     7: list<string> images,
 }
 
+// 用户注册
+
 struct UserRegisterRequest {
-    1: string username,
-    2: string password,
+    1: string username
+    2: string password
 }
 
 struct UserRegisterResponse {
     1: i32 status_code,
     2: string status_msg,
-    3: string token,
 }
 
+// 用户登录
+
 struct UserLoginRequest {
-    1: string username,
-    2: string password,
+    1: string username
+    2: string password
 }
 
 struct UserLoginResponse {
     1: i32 status_code,
     2: string status_msg,
     3: i32 user_id,
-    4: string token,
 }
 
+// 获取用户信息
+
 struct UserInfoRequest {
-    1: i32 user_id,
-    2: string token,
+    1: i32 user_id
 }
 
 struct UserInfoResponse {
@@ -52,9 +58,21 @@ struct UserInfoResponse {
     3: UserInfo user_info,
 }
 
+// 上传用户信息
+struct UserInfoUploadRequest {
+    1: i32 user_id
+    3: UserInfo user_info
+}
+
+struct UserInfoUploadResponse {
+    1: i32 status_code,
+    2: string status_msg,
+}
+
+// 获取用户档案信息
+
 struct UserProfileInfoRequest {
-    1: i32 user_id,
-    2: string token,
+    1: i32 user_id
 }
 
 struct UserProfileInfoResponse {
@@ -63,15 +81,11 @@ struct UserProfileInfoResponse {
     3: UserProfileInfo user_profile_info,
 }
 
+// 上传用户档案信息
+
 struct UserProfileUploadRequest {
-    1: string token,
-    2: i32 user_id,
-    3: string mobile_phone,
-    4: string introduction,
-    5: string qq_number,
-    6: string wechat_number,
-    7: list<string> honors,
-    8: list<string> images,
+    1: i32 user_id
+    2: UserProfileInfo user_profile_info
 }
 
 struct UserProfileUploadResponse {
@@ -86,6 +100,8 @@ service UserService {
     UserLoginResponse UserLogin(1: UserLoginRequest req)
     // 获取用户信息
     UserInfoResponse UserInfo(1: UserInfoRequest req)
+    // 上传用户信息
+    UserInfoUploadResponse UserInfoUpload(1: UserInfoUploadRequest req)
     // 获取用户档案信息
     UserProfileInfoResponse UserProfileInfo(1: UserProfileInfoRequest req)
     // 上传用户档案信息

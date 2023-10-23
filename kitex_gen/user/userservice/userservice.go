@@ -22,6 +22,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"UserRegister":      kitex.NewMethodInfo(userRegisterHandler, newUserServiceUserRegisterArgs, newUserServiceUserRegisterResult, false),
 		"UserLogin":         kitex.NewMethodInfo(userLoginHandler, newUserServiceUserLoginArgs, newUserServiceUserLoginResult, false),
 		"UserInfo":          kitex.NewMethodInfo(userInfoHandler, newUserServiceUserInfoArgs, newUserServiceUserInfoResult, false),
+		"UserInfoUpload":    kitex.NewMethodInfo(userInfoUploadHandler, newUserServiceUserInfoUploadArgs, newUserServiceUserInfoUploadResult, false),
 		"UserProfileInfo":   kitex.NewMethodInfo(userProfileInfoHandler, newUserServiceUserProfileInfoArgs, newUserServiceUserProfileInfoResult, false),
 		"UserProfileUpload": kitex.NewMethodInfo(userProfileUploadHandler, newUserServiceUserProfileUploadArgs, newUserServiceUserProfileUploadResult, false),
 	}
@@ -91,6 +92,24 @@ func newUserServiceUserInfoArgs() interface{} {
 
 func newUserServiceUserInfoResult() interface{} {
 	return user.NewUserServiceUserInfoResult()
+}
+
+func userInfoUploadHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceUserInfoUploadArgs)
+	realResult := result.(*user.UserServiceUserInfoUploadResult)
+	success, err := handler.(user.UserService).UserInfoUpload(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newUserServiceUserInfoUploadArgs() interface{} {
+	return user.NewUserServiceUserInfoUploadArgs()
+}
+
+func newUserServiceUserInfoUploadResult() interface{} {
+	return user.NewUserServiceUserInfoUploadResult()
 }
 
 func userProfileInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -164,6 +183,16 @@ func (p *kClient) UserInfo(ctx context.Context, req *user.UserInfoRequest) (r *u
 	_args.Req = req
 	var _result user.UserServiceUserInfoResult
 	if err = p.c.Call(ctx, "UserInfo", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserInfoUpload(ctx context.Context, req *user.UserInfoUploadRequest) (r *user.UserInfoUploadResponse, err error) {
+	var _args user.UserServiceUserInfoUploadArgs
+	_args.Req = req
+	var _result user.UserServiceUserInfoUploadResult
+	if err = p.c.Call(ctx, "UserInfoUpload", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

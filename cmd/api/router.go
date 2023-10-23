@@ -3,7 +3,7 @@
 package main
 
 import (
-	handler "Fusion/cmd/api/biz/handler"
+	handler "github.com/Yra-A/Fusion_Go/cmd/api/biz/handler"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

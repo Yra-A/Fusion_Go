@@ -1,65 +1,52 @@
-// Copyright 2021 CloudWeGo Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
 package errno
 
 import (
-  "errors"
-  "fmt"
+	"errors"
+	"fmt"
 )
 
 const (
-  SuccessCode    = 0
-  FailCode       = 10000
-  ServiceErrCode = 10001
-  ParamErrCode   = 10002
+	SuccessCode                = 0
+	FailCode                   = 10000
+	ServiceErrCode             = 10001
+	ParamErrCode               = 10002
+	AuthorizationFailedErrCode = 10003
 )
 
 type ErrNo struct {
-  ErrCode int64
-  ErrMsg  string
+	ErrCode int32
+	ErrMsg  string
 }
 
 func (e ErrNo) Error() string {
-  return fmt.Sprintf("err_code=%d, err_msg=%s", e.ErrCode, e.ErrMsg)
+	return fmt.Sprintf("err_code=%d, err_msg=%s", e.ErrCode, e.ErrMsg)
 }
 
-func NewErrNo(code int64, msg string) ErrNo {
-  return ErrNo{code, msg}
+func NewErrNo(code int32, msg string) ErrNo {
+	return ErrNo{code, msg}
 }
 
 func (e ErrNo) WithMessage(msg string) ErrNo {
-  e.ErrMsg = msg
-  return e
+	e.ErrMsg = msg
+	return e
 }
 
 var (
-  Success    = NewErrNo(SuccessCode, "成功")
-  ServiceErr = NewErrNo(ServiceErrCode, "服务未能成功启动")
-  ParamErr   = NewErrNo(ParamErrCode, "参数错误")
-  Fail       = NewErrNo(FailCode, "出现失败")
+	Success                = NewErrNo(SuccessCode, "成功")
+	ServiceErr             = NewErrNo(ServiceErrCode, "服务未能成功启动")
+	ParamErr               = NewErrNo(ParamErrCode, "参数错误")
+	Fail                   = NewErrNo(FailCode, "出现失败")
+	AuthorizationFailedErr = NewErrNo(AuthorizationFailedErrCode, "授权失败")
 )
 
 // ConvertErr convert error to Errno
 func ConvertErr(err error) ErrNo {
-  Err := ErrNo{}
-  if errors.As(err, &Err) {
-    return Err
-  }
+	Err := ErrNo{}
+	if errors.As(err, &Err) {
+		return Err
+	}
 
-  s := ServiceErr
-  s.ErrMsg = err.Error()
-  return s
+	s := ServiceErr
+	s.ErrMsg = err.Error()
+	return s
 }
