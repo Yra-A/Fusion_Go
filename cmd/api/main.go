@@ -3,12 +3,35 @@
 package main
 
 import (
+	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
+	"github.com/Yra-A/Fusion_Go/cmd/api/rpc"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/hertz-contrib/logger/accesslog"
+	hertzlogrus "github.com/hertz-contrib/logger/logrus"
+	"github.com/hertz-contrib/obs-opentelemetry/tracing"
 )
 
+func Init() {
+	rpc.InitRPC()
+	jwt.InitJwt()
+	logger := hertzlogrus.NewLogger()
+	hlog.SetLogger(logger)
+	hlog.SetLevel(hlog.LevelInfo)
+}
+
 func main() {
-	h := server.Default()
+	Init()
+	tracer, cfg := tracing.NewServerTracer()
+	h := server.New(
+
+		server.WithStreamBody(true),
+		//server.WithHostPorts("0.0.0.0:8888"),
+		tracer,
+	)
+	h.Use(accesslog.New(accesslog.WithFormat("[${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: ${body}】【req query parameter: ${queryParams}】【response body: ${resBody}】")))
 
 	register(h)
+	h.Use(tracing.ServerMiddleware(cfg))
 	h.Spin()
 }

@@ -4,10 +4,13 @@ namespace go api
 
 struct UserInfo {
     1: i32 user_id,
-    2: string nickname,
-    3: string realname,
-    4: i32 contest_favorite_count,
-    5: string avatar_url,
+    2: i32 gender,
+    3: string nickname,
+    4: string realname,
+    5: i32 contest_favorite_count,
+    6: string avatar_url,
+    7: i32 enrollment_year,
+    8: string college,
 }
 
 struct UserProfileInfo {
@@ -20,6 +23,8 @@ struct UserProfileInfo {
     7: list<string> images,
 }
 
+// 用户注册
+
 struct UserRegisterRequest {
     1: string username (api.raw_body="username")
     2: string password (api.raw_body="password")
@@ -30,6 +35,8 @@ struct UserRegisterResponse {
     2: string status_msg,
     3: string token,
 }
+
+// 用户登录
 
 struct UserLoginRequest {
     1: string username (api.raw_body="username")
@@ -43,6 +50,8 @@ struct UserLoginResponse {
     4: string token,
 }
 
+// 获取用户信息
+
 struct UserInfoRequest {
     1: i32 user_id (api.query="user_id")
     2: string token (api.query="token")
@@ -53,6 +62,20 @@ struct UserInfoResponse {
     2: string status_msg,
     3: UserInfo user_info,
 }
+
+// 上传用户信息
+struct UserInfoUploadRequest {
+    1: i32 user_id (api.raw_body="user_id")
+    2: string token (api.raw_body="token")
+    3: UserInfo user_info (api.raw_body="user_info")
+}
+
+struct UserInfoUploadResponse {
+    1: i32 status_code,
+    2: string status_msg,
+}
+
+// 获取用户档案信息
 
 struct UserProfileInfoRequest {
     1: i32 user_id (api.path="user_id")
@@ -65,15 +88,12 @@ struct UserProfileInfoResponse {
     3: UserProfileInfo user_profile_info,
 }
 
+// 上传用户档案信息
+
 struct UserProfileUploadRequest {
-    1: string token (api.query="token")
-    2: i32 user_id (api.raw_body="user_id")
-    3: string mobile_phone (api.raw_body="mobile_phone")
-    4: string introduction (api.raw_body="introduction")
-    5: string qq_number (api.raw_body="qq_number")
-    6: string wechat_number (api.raw_body="wechat_number")
-    7: list<string> honors (api.raw_body="honors")
-    8: list<string> images (api.raw_body="images")
+    1: i32 user_id (api.raw_body="user_id")
+    2: string token (api.raw_body="token")
+    3: UserProfileInfo user_profile_info (api.raw_body="user_profile_info")
 }
 
 struct UserProfileUploadResponse {
@@ -121,6 +141,8 @@ service ApiService {
     UserLoginResponse UserLogin(1: UserLoginRequest req) (api.post="/fusion/user/login/")
     // 获取用户信息
     UserInfoResponse UserInfo(1: UserInfoRequest req) (api.get="/fusion/user/info/")
+    // 上传用户信息
+    UserInfoUploadResponse UserInfoUpload(1: UserInfoUploadRequest req) (api.post="/fusion/user/info/upload/")
     // 获取用户档案信息
     UserProfileInfoResponse UserProfileInfo(1: UserProfileInfoRequest req) (api.get="/fusion/user/profile/{user_id}")
     // 上传用户档案信息

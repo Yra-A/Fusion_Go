@@ -3,7 +3,7 @@
 package api
 
 import (
-	api "Fusion/cmd/api/biz/handler/api"
+	api "github.com/Yra-A/Fusion_Go/cmd/api/biz/handler/api"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -35,6 +35,10 @@ func Register(r *server.Hertz) {
 			{
 				_info0 := _user.Group("/info", _info0Mw()...)
 				_info0.GET("/", append(_userinfoMw(), api.UserInfo)...)
+				{
+					_upload := _info0.Group("/upload", _uploadMw()...)
+					_upload.POST("/", append(_userinfouploadMw(), api.UserInfoUpload)...)
+				}
 			}
 			{
 				_login := _user.Group("/login", _loginMw()...)
@@ -44,8 +48,8 @@ func Register(r *server.Hertz) {
 				_profile := _user.Group("/profile", _profileMw()...)
 				_profile.GET("/{user_id}", append(_userprofileinfoMw(), api.UserProfileInfo)...)
 				{
-					_upload := _profile.Group("/upload", _uploadMw()...)
-					_upload.POST("/", append(_userprofileuploadMw(), api.UserProfileUpload)...)
+					_upload0 := _profile.Group("/upload", _upload0Mw()...)
+					_upload0.POST("/", append(_userprofileuploadMw(), api.UserProfileUpload)...)
 				}
 			}
 			{

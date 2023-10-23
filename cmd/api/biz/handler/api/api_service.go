@@ -3,12 +3,11 @@
 package api
 
 import (
-	"Fusion/cmd/api/biz/handler"
-	api "Fusion/cmd/api/biz/model/api"
 	"context"
+
+	api "github.com/Yra-A/Fusion_Go/cmd/api/biz/model/api"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"strconv"
 )
 
 // UserRegister .
@@ -48,8 +47,9 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req api.UserInfoRequest
-	if err = c.BindAndValidate(&req); err != nil {
-		handler.BadResponse(c, err)
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -58,26 +58,31 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// Todo: 未完成
+// UserInfoUpload .
+// @router /fusion/user/info/upload/ [POST]
+func UserInfoUpload(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.UserInfoUploadRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.UserInfoUploadResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
 // UserProfileInfo .
 // @router /fusion/user/profile/{user_id} [GET]
 func UserProfileInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req api.UserProfileInfoRequest
-	if err = c.BindAndValidate(&req); err != nil {
-		handler.BadResponse(c, err)
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
 		return
-	}
-	if user_id := c.Param("user_id"); user_id != "" {
-		tempID, err := strconv.Atoi(user_id)
-		if err != nil {
-			handler.BadResponse(c, err)
-			return
-		}
-		req.UserID = int32(tempID)
-	}
-	if token := c.Query("token"); token != "" {
-		req.Token = token
 	}
 
 	resp := new(api.UserProfileInfoResponse)

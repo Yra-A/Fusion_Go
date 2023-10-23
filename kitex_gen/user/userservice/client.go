@@ -14,6 +14,7 @@ type Client interface {
 	UserRegister(ctx context.Context, req *user.UserRegisterRequest, callOptions ...callopt.Option) (r *user.UserRegisterResponse, err error)
 	UserLogin(ctx context.Context, req *user.UserLoginRequest, callOptions ...callopt.Option) (r *user.UserLoginResponse, err error)
 	UserInfo(ctx context.Context, req *user.UserInfoRequest, callOptions ...callopt.Option) (r *user.UserInfoResponse, err error)
+	UserInfoUpload(ctx context.Context, req *user.UserInfoUploadRequest, callOptions ...callopt.Option) (r *user.UserInfoUploadResponse, err error)
 	UserProfileInfo(ctx context.Context, req *user.UserProfileInfoRequest, callOptions ...callopt.Option) (r *user.UserProfileInfoResponse, err error)
 	UserProfileUpload(ctx context.Context, req *user.UserProfileUploadRequest, callOptions ...callopt.Option) (r *user.UserProfileUploadResponse, err error)
 }
@@ -60,6 +61,11 @@ func (p *kUserServiceClient) UserLogin(ctx context.Context, req *user.UserLoginR
 func (p *kUserServiceClient) UserInfo(ctx context.Context, req *user.UserInfoRequest, callOptions ...callopt.Option) (r *user.UserInfoResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserInfo(ctx, req)
+}
+
+func (p *kUserServiceClient) UserInfoUpload(ctx context.Context, req *user.UserInfoUploadRequest, callOptions ...callopt.Option) (r *user.UserInfoUploadResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserInfoUpload(ctx, req)
 }
 
 func (p *kUserServiceClient) UserProfileInfo(ctx context.Context, req *user.UserProfileInfoRequest, callOptions ...callopt.Option) (r *user.UserProfileInfoResponse, err error) {
