@@ -4,8 +4,11 @@ package api
 
 import (
 	"context"
-
-	api "github.com/Yra-A/Fusion_Go/cmd/api/biz/model/api"
+	"github.com/Yra-A/Fusion_Go/cmd/api/biz/handler"
+	"github.com/Yra-A/Fusion_Go/cmd/api/biz/model/api"
+	"github.com/Yra-A/Fusion_Go/cmd/api/rpc"
+	"github.com/Yra-A/Fusion_Go/kitex_gen/user"
+	"github.com/Yra-A/Fusion_Go/pkg/errno"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -47,15 +50,33 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req api.UserInfoRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
 		return
 	}
-
+	kresp, err := rpc.UserInfo(context.Background(), &user.UserInfoRequest{
+		UserId: req.UserID,
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	u := kresp.UserInfo
 	resp := new(api.UserInfoResponse)
+	resp.StatusCode = errno.Success.ErrCode
+	resp.StatusMsg = errno.Success.ErrMsg
+	resp.UserInfo = &api.UserInfo{
+		UserID:               u.UserId,
+		Gender:               u.Gender,
+		Nickname:             u.Nickname,
+		Realname:             u.Realname,
+		ContestFavoriteCount: u.ContestFavoriteCount,
+		AvatarURL:            u.AvatarUrl,
+		EnrollmentYear:       u.EnrollmentYear,
+		College:              u.College,
+	}
+	handler.SendResponse(c, resp)
 
-	c.JSON(consts.StatusOK, resp)
 }
 
 // UserInfoUpload .
@@ -63,14 +84,34 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 func UserInfoUpload(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req api.UserInfoUploadRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
 		return
 	}
-
+	if req.GetUserID() != req.UserInfo.UserID {
+		handler.BadResponse(c, errno.ParamErr)
+		return
+	}
+	kresp, err := rpc.UserInfoUpload(context.Background(), &user.UserInfoUploadRequest{
+		UserId: req.UserID,
+		UserInfo: &user.UserInfo{
+			UserId:               req.UserInfo.UserID,
+			Gender:               req.UserInfo.Gender,
+			Nickname:             req.UserInfo.Nickname,
+			Realname:             req.UserInfo.Realname,
+			ContestFavoriteCount: req.UserInfo.ContestFavoriteCount,
+			AvatarUrl:            req.UserInfo.AvatarURL,
+			EnrollmentYear:       req.UserInfo.EnrollmentYear,
+			College:              req.UserInfo.College,
+		},
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
 	resp := new(api.UserInfoUploadResponse)
-
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
 	c.JSON(consts.StatusOK, resp)
 }
 
@@ -79,15 +120,46 @@ func UserInfoUpload(ctx context.Context, c *app.RequestContext) {
 func UserProfileInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req api.UserProfileInfoRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
 		return
 	}
 
-	resp := new(api.UserProfileInfoResponse)
+	kresp, err := rpc.UserProfileInfo(context.Background(), &user.UserProfileInfoRequest{
+		UserId: req.UserID,
+	})
 
-	c.JSON(consts.StatusOK, resp)
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+
+	up := kresp.UserProfileInfo
+	ui := kresp.UserInfo
+	resp := new(api.UserProfileInfoResponse)
+	resp.StatusCode = errno.Success.ErrCode
+	resp.StatusMsg = errno.Success.ErrMsg
+	resp.UserProfileInfo = &api.UserProfileInfo{
+		UserID:       up.UserId,
+		MobilePhone:  up.MobilePhone,
+		Introduction: up.Introduction,
+		QqNumber:     up.QqNumber,
+		WechatNumber: up.WechatNumber,
+		Honors:       up.Honors,
+		Images:       up.Images,
+		IsShow:       up.IsShow,
+	}
+	resp.UserInfo = &api.UserInfo{
+		UserID:               ui.UserId,
+		Gender:               ui.Gender,
+		Nickname:             ui.Nickname,
+		Realname:             ui.Realname,
+		ContestFavoriteCount: ui.ContestFavoriteCount,
+		AvatarURL:            ui.AvatarUrl,
+		EnrollmentYear:       ui.EnrollmentYear,
+		College:              ui.College,
+	}
+	handler.SendResponse(c, resp)
 }
 
 // UserProfileUpload .
@@ -95,14 +167,35 @@ func UserProfileInfo(ctx context.Context, c *app.RequestContext) {
 func UserProfileUpload(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req api.UserProfileUploadRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
 		return
 	}
-
+	if req.GetUserID() != req.UserProfileInfo.UserID {
+		handler.BadResponse(c, errno.ParamErr)
+		return
+	}
+	kresp, err := rpc.UserProfileUpload(context.Background(), &user.UserProfileUploadRequest{
+		UserId: req.UserID,
+		Token:  req.Token,
+		UserProfileInfo: &user.UserProfileInfo{
+			UserId:       req.UserProfileInfo.UserID,
+			MobilePhone:  req.UserProfileInfo.MobilePhone,
+			Introduction: req.UserProfileInfo.Introduction,
+			QqNumber:     req.UserProfileInfo.QqNumber,
+			WechatNumber: req.UserProfileInfo.WechatNumber,
+			Honors:       req.UserProfileInfo.Honors,
+			Images:       req.UserProfileInfo.Images,
+			IsShow:       req.UserProfileInfo.IsShow,
+		},
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
 	resp := new(api.UserProfileUploadResponse)
-
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
 	c.JSON(consts.StatusOK, resp)
 }
 

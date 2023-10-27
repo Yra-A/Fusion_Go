@@ -23,7 +23,7 @@ func Register(r *server.Hertz) {
 			_contest := _fusion.Group("/contest", _contestMw()...)
 			{
 				_info := _contest.Group("/info", _infoMw()...)
-				_info.GET("/{contest_id}", append(_contestinfoMw(), api.ContestInfo)...)
+				_info.GET("/:contest_id", append(_contestinfoMw(), api.ContestInfo)...)
 			}
 			{
 				_list := _contest.Group("/list", _listMw()...)
@@ -46,7 +46,7 @@ func Register(r *server.Hertz) {
 			}
 			{
 				_profile := _user.Group("/profile", _profileMw()...)
-				_profile.GET("/{user_id}", append(_userprofileinfoMw(), api.UserProfileInfo)...)
+				_profile.GET("/:user_id", append(_userprofileinfoMw(), api.UserProfileInfo)...)
 				{
 					_upload0 := _profile.Group("/upload", _upload0Mw()...)
 					_upload0.POST("/", append(_userprofileuploadMw(), api.UserProfileUpload)...)

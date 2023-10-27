@@ -24,12 +24,11 @@ func main() {
 	Init()
 	tracer, cfg := tracing.NewServerTracer()
 	h := server.New(
-
 		server.WithStreamBody(true),
 		//server.WithHostPorts("0.0.0.0:8888"),
 		tracer,
 	)
-	h.Use(accesslog.New(accesslog.WithFormat("[${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: ${body}】【req query parameter: ${queryParams}】【response body: ${resBody}】")))
+	h.Use(accesslog.New(accesslog.WithFormat("[${url}=-=-=${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: ${body}】【req query parameter: ${queryParams}】【response body: ${resBody}】")))
 
 	register(h)
 	h.Use(tracing.ServerMiddleware(cfg))

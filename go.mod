@@ -6,12 +6,19 @@ require (
 	github.com/apache/thrift v0.19.0
 	github.com/cloudwego/hertz v0.7.1
 	github.com/cloudwego/kitex v0.7.3
+	github.com/hertz-contrib/gzip v0.0.1
 	github.com/hertz-contrib/jwt v1.0.2
 	github.com/hertz-contrib/logger/accesslog v0.0.0-20231023044348-d2083b79d6d8
 	github.com/hertz-contrib/logger/logrus v1.0.0
 	github.com/hertz-contrib/obs-opentelemetry/tracing v0.3.0
 	github.com/kitex-contrib/obs-opentelemetry v0.2.3
+	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20230819133448-76093321aa8e
 	github.com/kitex-contrib/registry-etcd v0.2.0
+)
+
+require (
+	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	github.com/opentracing/opentracing-go v1.2.0 // indirect
 )
 
 require (
@@ -43,6 +50,8 @@ require (
 	github.com/henrylee2cn/ameda v1.5.1 // indirect
 	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/jhump/protoreflect v1.8.2 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -51,7 +60,7 @@ require (
 	github.com/nyaruka/phonenumbers v1.1.6 // indirect
 	github.com/oleiade/lane v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/sirupsen/logrus v1.9.0 // indirect
+	github.com/sirupsen/logrus v1.9.2 // indirect
 	github.com/stretchr/testify v1.8.3 // indirect
 	github.com/tidwall/gjson v1.14.4 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
@@ -78,6 +87,9 @@ require (
 	google.golang.org/grpc v1.55.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/driver/mysql v1.5.2
+	gorm.io/gorm v1.25.5
+	gorm.io/plugin/opentracing v0.0.0-20211220013347-7d2b2af23560
 )
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0

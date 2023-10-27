@@ -4,11 +4,11 @@ package api
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/hertz-contrib/gzip"
 )
 
 func rootMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{gzip.Gzip(gzip.DefaultCompression)}
 }
 
 func _fusionMw() []app.HandlerFunc {
