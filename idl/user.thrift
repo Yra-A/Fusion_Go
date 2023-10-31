@@ -11,6 +11,7 @@ struct UserInfo {
     8: string college,
 }
 
+
 struct UserProfileInfo {
     1: i32 user_id,
     2: string mobile_phone,
@@ -19,6 +20,7 @@ struct UserProfileInfo {
     5: string wechat_number,
     6: list<string> honors,
     7: list<string> images,
+    8: list<bool> is_show,
 }
 
 // 用户注册
@@ -79,6 +81,7 @@ struct UserProfileInfoResponse {
     1: i32 status_code,
     2: string status_msg,
     3: UserProfileInfo user_profile_info,
+    4: UserInfo user_info,
 }
 
 // 上传用户档案信息

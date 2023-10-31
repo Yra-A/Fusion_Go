@@ -11,7 +11,7 @@ services:
     networks:
       - default
     environment:
-      - MYSQL_DATABASE=fusion_db
+      - MYSQL_DATABASE=fusion_db  
       - MYSQL_USER=gorm
       - MYSQL_PASSWORD=gorm
       - MYSQL_RANDOM_ROOT_PASSWORD="yes"
