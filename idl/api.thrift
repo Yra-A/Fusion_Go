@@ -48,15 +48,14 @@ struct UserLoginRequest {
 struct UserLoginResponse {
     1: i32 status_code,
     2: string status_msg,
-    3: i32 user_id,
-    4: string token,
+    3: string token,
 }
 
 // 获取用户信息
 
 struct UserInfoRequest {
     1: i32 user_id (api.query="user_id")
-    2: string token (api.query="token")
+    2: string authorization (api.header="Authorization")
 }
 
 struct UserInfoResponse {
@@ -68,7 +67,7 @@ struct UserInfoResponse {
 // 上传用户信息
 struct UserInfoUploadRequest {
     1: i32 user_id
-    2: string token
+    2: string authorization (api.header="Authorization")
     3: UserInfo user_info
 }
 
@@ -81,7 +80,7 @@ struct UserInfoUploadResponse {
 
 struct UserProfileInfoRequest {
     1: i32 user_id (api.path="user_id")
-    2: string token (api.query="token")
+    2: string authorization (api.header="Authorization")
 }
 
 struct UserProfileInfoResponse {
@@ -95,7 +94,7 @@ struct UserProfileInfoResponse {
 
 struct UserProfileUploadRequest {
     1: i32 user_id
-    2: string token
+    2: string authorization (api.header="Authorization")
     3: UserProfileInfo user_profile_info
 }
 

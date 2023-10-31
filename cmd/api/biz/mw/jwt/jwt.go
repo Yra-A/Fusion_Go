@@ -13,6 +13,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/jwt"
 	"net/http"
+	"regexp"
 	"time"
 )
 
@@ -21,10 +22,12 @@ var JwtMiddleware *jwt.HertzJWTMiddleware
 func InitJwt() {
 	var err error
 	JwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
-		Key:        []byte(constants.SecretKey),
-		TimeFunc:   time.Now,
-		Timeout:    7 * 24 * time.Hour,  // access token 过期时间 7 天
-		MaxRefresh: 30 * 24 * time.Hour, // refresh 过期时间为 30 天
+		Key:           []byte(constants.SecretKey),
+		TimeFunc:      time.Now,
+		Timeout:       7 * 24 * time.Hour,      // access token 过期时间 7 天
+		MaxRefresh:    30 * 24 * time.Hour,     // refresh 过期时间为 30 天
+		TokenLookup:   "header: Authorization", // 设置 token 的获取源
+		TokenHeadName: "Bearer",                // 设置从 header 中获取 token 时的前缀
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
 			hlog.CtxInfof(ctx, "Login success ，token is issued clientIP: "+c.ClientIP())
 			handler.SendResponse(c, api.UserLoginResponse{
@@ -42,19 +45,46 @@ func InitJwt() {
 			if len(req.Username) == 0 || len(req.Password) == 0 {
 				return nil, jwt.ErrMissingLoginValues
 			}
-
-			resp, err := rpc.UserLogin(context.Background(), &user.UserLoginRequest{
+			kresp, err := rpc.UserLogin(context.Background(), &user.UserLoginRequest{
 				Username: req.Username,
 				Password: req.Password,
 			})
 			if err != nil {
 				return nil, jwt.ErrFailedAuthentication
 			}
-			return resp.UserId, nil // 将 UserId 存入 token 的负载部分
+			return kresp.UserId, nil // 将 UserId 存入 token 的负载部分
 		},
 		Authorizator: func(data interface{}, ctx context.Context, c *app.RequestContext) bool {
-			// 验证已登录成功的用户 data(user_id) 的权限
-			// 暂无，默认为 true
+			//验证已登录成功的用户 data(user_id) 的权限
+			var userId int32
+			if floatId, ok := data.(float64); ok {
+				userId = int32(floatId)
+			}
+			if c.FullPath() == "/fusion/user/info/" {
+				var req api.UserInfoRequest
+				if err != c.BindAndValidate(&req) {
+					return false
+				}
+				if userId != req.UserID {
+					return false
+				}
+			} else if c.FullPath() == "/fusion/user/info/upload/" {
+				var req api.UserInfoUploadRequest
+				if err != c.BindAndValidate(&req) {
+					return false
+				}
+				if userId != req.UserInfo.UserID {
+					return false
+				}
+			} else if c.FullPath() == "/fusion/user/profile/info/" {
+				var req api.UserProfileUploadRequest
+				if err != c.BindAndValidate(&req) {
+					return false
+				}
+				if userId != req.UserID {
+					return false
+				}
+			}
 			return true
 		},
 		IdentityKey: constants.IdentityKey,
@@ -78,10 +108,34 @@ func InitJwt() {
 			return e.Error()
 		},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
-			c.JSON(http.StatusOK, api.UserLoginResponse{
-				StatusCode: errno.AuthorizationFailedErrCode,
-				StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
-			})
+			path := c.FullPath()
+			userProfileInfoPattern := regexp.MustCompile(`^/fusion/user/profile/info/\d+$`)
+			if path == "/fusion/user/login/" {
+				c.JSON(http.StatusUnauthorized, api.UserLoginResponse{
+					StatusCode: errno.AuthorizationFailedErrCode,
+					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
+				})
+			} else if path == "/fusion/user/info/" {
+				c.JSON(http.StatusUnauthorized, api.UserInfoResponse{
+					StatusCode: errno.AuthorizationFailedErrCode,
+					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
+				})
+			} else if path == "/fusion/user/info/upload/" {
+				c.JSON(http.StatusUnauthorized, api.UserInfoUploadResponse{
+					StatusCode: errno.AuthorizationFailedErrCode,
+					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
+				})
+			} else if userProfileInfoPattern.MatchString(path) {
+				c.JSON(http.StatusUnauthorized, api.UserProfileUploadResponse{
+					StatusCode: errno.AuthorizationFailedErrCode,
+					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
+				})
+			} else if path == "/fusion/user/profile/info/upload/" {
+				c.JSON(http.StatusUnauthorized, api.UserProfileUploadResponse{
+					StatusCode: errno.AuthorizationFailedErrCode,
+					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
+				})
+			}
 		},
 		//ParseOptions: []jwtv4.ParserOption{
 		//	jwtv4.WithValidMethods([]string{"HS256"}),

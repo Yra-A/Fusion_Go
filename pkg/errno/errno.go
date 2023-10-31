@@ -11,6 +11,9 @@ const (
 	ServiceErrCode             = 10001
 	ParamErrCode               = 10002
 	AuthorizationFailedErrCode = 10003
+	InvalidCredentialsErrCode  = 10004
+	UserNotFoundErrCode        = 10005
+	UserinfoNotSetCode         = 10006
 )
 
 type ErrNo struct {
@@ -37,6 +40,9 @@ var (
 	ParamErr               = NewErrNo(ParamErrCode, "参数错误")
 	Fail                   = NewErrNo(FailCode, "出现失败")
 	AuthorizationFailedErr = NewErrNo(AuthorizationFailedErrCode, "授权失败")
+	InvalidCredentialsErr  = NewErrNo(InvalidCredentialsErrCode, "用户名或密码错误")
+	UserNotExistErr        = NewErrNo(UserNotFoundErrCode, "用户不存在")
+	UserinfoNotSetErr      = NewErrNo(UserinfoNotSetCode, "用户信息未设置")
 )
 
 // ConvertErr convert error to Errno

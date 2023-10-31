@@ -28,6 +28,12 @@ type UserProfileInfo struct {
 	Images       []string `gorm:"type:varchar(255)" json:"images"`
 	IsShow       []bool   `gorm:"type:varchar(255)" json:"is_show"`
 }
+type Authentication struct {
+	AuthID   int32  `gorm:"primaryKey;autoIncrement;column:auth_id"`
+	UserID   int32  `gorm:"column:user_id"`
+	Username string `gorm:"column:username"`
+	Password string `gorm:"column:password"`
+}
 
 var userInfo = &UserInfo{
 	UserId:               1,
@@ -50,6 +56,12 @@ var userProfileInfo = &UserProfileInfo{
 	Images:       []string{"image1", "image2"},
 	IsShow:       []bool{true, false},
 }
+var authentication = &Authentication{
+	AuthID:   1,
+	UserID:   31,
+	Username: "rocketzhu",
+	Password: "12345",
+}
 
 // QueryUserByUserId query user by user_id
 func QueryUserByUserId(userId int32) (*UserInfo, error) {
@@ -69,6 +81,16 @@ func QueryUserProfileByUserId(userId int32) (*UserProfileInfo, error) {
 	//	return nil, err
 	//}
 	u := userProfileInfo
+	return u, nil
+}
+
+// QueryUserByName query user by username
+func QueryUserByName(username string) (*Authentication, error) {
+	//u := &Authentication{}
+	//if err := DB.Where("username = ?", username).First(u).Error; err != nil {
+	//	return nil, err
+	//}
+	u := authentication
 	return u, nil
 }
 

@@ -2938,22 +2938,8 @@ func (p *UserProfileUploadRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
-				l, err = p.FastReadField2(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 3:
 			if fieldTypeId == thrift.STRUCT {
-				l, err = p.FastReadField3(buf[offset:])
+				l, err = p.FastReadField2(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -3017,20 +3003,6 @@ func (p *UserProfileUploadRequest) FastReadField1(buf []byte) (int, error) {
 func (p *UserProfileUploadRequest) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-
-		p.Token = v
-
-	}
-	return offset, nil
-}
-
-func (p *UserProfileUploadRequest) FastReadField3(buf []byte) (int, error) {
-	offset := 0
-
 	tmp := NewUserProfileInfo()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
@@ -3052,7 +3024,6 @@ func (p *UserProfileUploadRequest) FastWriteNocopy(buf []byte, binaryWriter bthr
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
-		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -3065,7 +3036,6 @@ func (p *UserProfileUploadRequest) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
-		l += p.field3Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -3083,16 +3053,7 @@ func (p *UserProfileUploadRequest) fastWriteField1(buf []byte, binaryWriter bthr
 
 func (p *UserProfileUploadRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "token", thrift.STRING, 2)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Token)
-
-	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
-	return offset
-}
-
-func (p *UserProfileUploadRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
-	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_profile_info", thrift.STRUCT, 3)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_profile_info", thrift.STRUCT, 2)
 	offset += p.UserProfileInfo.FastWriteNocopy(buf[offset:], binaryWriter)
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -3109,16 +3070,7 @@ func (p *UserProfileUploadRequest) field1Length() int {
 
 func (p *UserProfileUploadRequest) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("token", thrift.STRING, 2)
-	l += bthrift.Binary.StringLengthNocopy(p.Token)
-
-	l += bthrift.Binary.FieldEndLength()
-	return l
-}
-
-func (p *UserProfileUploadRequest) field3Length() int {
-	l := 0
-	l += bthrift.Binary.FieldBeginLength("user_profile_info", thrift.STRUCT, 3)
+	l += bthrift.Binary.FieldBeginLength("user_profile_info", thrift.STRUCT, 2)
 	l += p.UserProfileInfo.BLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l

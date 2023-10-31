@@ -19,7 +19,17 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.UserRegist
 
 // UserLogin implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.UserLoginRequest) (resp *user.UserLoginResponse, err error) {
-	// TODO: Your code here...
+	klog.CtxDebugf(ctx, "UserLogin called: %s", req.GetUsername()+" "+req.GetPassword())
+	resp = new(user.UserLoginResponse)
+	u, err := service.NewCheckUserService(ctx).CheckUser(req.Username, req.Password)
+	if err != nil {
+		resp.StatusCode = errno.InvalidCredentialsErr.ErrCode
+		resp.StatusMsg = errno.InvalidCredentialsErr.ErrMsg
+		return resp, nil
+	}
+	resp.StatusCode = errno.Success.ErrCode
+	resp.StatusMsg = errno.Success.ErrMsg
+	resp.UserId = u
 	return
 }
 

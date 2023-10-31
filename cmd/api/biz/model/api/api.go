@@ -1590,8 +1590,7 @@ func (p *UserLoginRequest) String() string {
 type UserLoginResponse struct {
 	StatusCode int32  `thrift:"status_code,1" form:"status_code" json:"status_code" query:"status_code"`
 	StatusMsg  string `thrift:"status_msg,2" form:"status_msg" json:"status_msg" query:"status_msg"`
-	UserID     int32  `thrift:"user_id,3" form:"user_id" json:"user_id" query:"user_id"`
-	Token      string `thrift:"token,4" form:"token" json:"token" query:"token"`
+	Token      string `thrift:"token,3" form:"token" json:"token" query:"token"`
 }
 
 func NewUserLoginResponse() *UserLoginResponse {
@@ -1606,10 +1605,6 @@ func (p *UserLoginResponse) GetStatusMsg() (v string) {
 	return p.StatusMsg
 }
 
-func (p *UserLoginResponse) GetUserID() (v int32) {
-	return p.UserID
-}
-
 func (p *UserLoginResponse) GetToken() (v string) {
 	return p.Token
 }
@@ -1617,8 +1612,7 @@ func (p *UserLoginResponse) GetToken() (v string) {
 var fieldIDToName_UserLoginResponse = map[int16]string{
 	1: "status_code",
 	2: "status_msg",
-	3: "user_id",
-	4: "token",
+	3: "token",
 }
 
 func (p *UserLoginResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -1661,18 +1655,8 @@ func (p *UserLoginResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField3(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 4:
 			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField4(iprot); err != nil {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -1729,15 +1713,6 @@ func (p *UserLoginResponse) ReadField2(iprot thrift.TProtocol) error {
 }
 
 func (p *UserLoginResponse) ReadField3(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI32(); err != nil {
-		return err
-	} else {
-		p.UserID = v
-	}
-	return nil
-}
-
-func (p *UserLoginResponse) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -1762,10 +1737,6 @@ func (p *UserLoginResponse) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
-			goto WriteFieldError
-		}
-		if err = p.writeField4(oprot); err != nil {
-			fieldId = 4
 			goto WriteFieldError
 		}
 
@@ -1822,10 +1793,10 @@ WriteFieldEndError:
 }
 
 func (p *UserLoginResponse) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user_id", thrift.I32, 3); err != nil {
+	if err = oprot.WriteFieldBegin("token", thrift.STRING, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI32(p.UserID); err != nil {
+	if err := oprot.WriteString(p.Token); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1838,23 +1809,6 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
-func (p *UserLoginResponse) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 4); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Token); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
-}
-
 func (p *UserLoginResponse) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1864,8 +1818,8 @@ func (p *UserLoginResponse) String() string {
 
 // 获取用户信息
 type UserInfoRequest struct {
-	UserID int32  `thrift:"user_id,1" json:"user_id" query:"user_id"`
-	Token  string `thrift:"token,2" json:"token" query:"token"`
+	UserID        int32  `thrift:"user_id,1" json:"user_id" query:"user_id"`
+	Authorization string `thrift:"authorization,2" header:"Authorization" json:"authorization"`
 }
 
 func NewUserInfoRequest() *UserInfoRequest {
@@ -1876,13 +1830,13 @@ func (p *UserInfoRequest) GetUserID() (v int32) {
 	return p.UserID
 }
 
-func (p *UserInfoRequest) GetToken() (v string) {
-	return p.Token
+func (p *UserInfoRequest) GetAuthorization() (v string) {
+	return p.Authorization
 }
 
 var fieldIDToName_UserInfoRequest = map[int16]string{
 	1: "user_id",
-	2: "token",
+	2: "authorization",
 }
 
 func (p *UserInfoRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1967,7 +1921,7 @@ func (p *UserInfoRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Token = v
+		p.Authorization = v
 	}
 	return nil
 }
@@ -2023,10 +1977,10 @@ WriteFieldEndError:
 }
 
 func (p *UserInfoRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("authorization", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Token); err != nil {
+	if err := oprot.WriteString(p.Authorization); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2285,9 +2239,9 @@ func (p *UserInfoResponse) String() string {
 
 // 上传用户信息
 type UserInfoUploadRequest struct {
-	UserID   int32     `thrift:"user_id,1" form:"user_id" json:"user_id" query:"user_id"`
-	Token    string    `thrift:"token,2" form:"token" json:"token" query:"token"`
-	UserInfo *UserInfo `thrift:"user_info,3" form:"user_info" json:"user_info" query:"user_info"`
+	UserID        int32     `thrift:"user_id,1" form:"user_id" json:"user_id" query:"user_id"`
+	Authorization string    `thrift:"authorization,2" header:"Authorization" json:"authorization"`
+	UserInfo      *UserInfo `thrift:"user_info,3" form:"user_info" json:"user_info" query:"user_info"`
 }
 
 func NewUserInfoUploadRequest() *UserInfoUploadRequest {
@@ -2298,8 +2252,8 @@ func (p *UserInfoUploadRequest) GetUserID() (v int32) {
 	return p.UserID
 }
 
-func (p *UserInfoUploadRequest) GetToken() (v string) {
-	return p.Token
+func (p *UserInfoUploadRequest) GetAuthorization() (v string) {
+	return p.Authorization
 }
 
 var UserInfoUploadRequest_UserInfo_DEFAULT *UserInfo
@@ -2313,7 +2267,7 @@ func (p *UserInfoUploadRequest) GetUserInfo() (v *UserInfo) {
 
 var fieldIDToName_UserInfoUploadRequest = map[int16]string{
 	1: "user_id",
-	2: "token",
+	2: "authorization",
 	3: "user_info",
 }
 
@@ -2413,7 +2367,7 @@ func (p *UserInfoUploadRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Token = v
+		p.Authorization = v
 	}
 	return nil
 }
@@ -2481,10 +2435,10 @@ WriteFieldEndError:
 }
 
 func (p *UserInfoUploadRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("authorization", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Token); err != nil {
+	if err := oprot.WriteString(p.Authorization); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2706,8 +2660,8 @@ func (p *UserInfoUploadResponse) String() string {
 
 // 获取用户档案信息
 type UserProfileInfoRequest struct {
-	UserID int32  `thrift:"user_id,1" json:"user_id" path:"user_id"`
-	Token  string `thrift:"token,2" json:"token" query:"token"`
+	UserID        int32  `thrift:"user_id,1" json:"user_id" path:"user_id"`
+	Authorization string `thrift:"authorization,2" header:"Authorization" json:"authorization"`
 }
 
 func NewUserProfileInfoRequest() *UserProfileInfoRequest {
@@ -2718,13 +2672,13 @@ func (p *UserProfileInfoRequest) GetUserID() (v int32) {
 	return p.UserID
 }
 
-func (p *UserProfileInfoRequest) GetToken() (v string) {
-	return p.Token
+func (p *UserProfileInfoRequest) GetAuthorization() (v string) {
+	return p.Authorization
 }
 
 var fieldIDToName_UserProfileInfoRequest = map[int16]string{
 	1: "user_id",
-	2: "token",
+	2: "authorization",
 }
 
 func (p *UserProfileInfoRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -2809,7 +2763,7 @@ func (p *UserProfileInfoRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Token = v
+		p.Authorization = v
 	}
 	return nil
 }
@@ -2865,10 +2819,10 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileInfoRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("authorization", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Token); err != nil {
+	if err := oprot.WriteString(p.Authorization); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -3182,7 +3136,7 @@ func (p *UserProfileInfoResponse) String() string {
 // 上传用户档案信息
 type UserProfileUploadRequest struct {
 	UserID          int32            `thrift:"user_id,1" form:"user_id" json:"user_id" query:"user_id"`
-	Token           string           `thrift:"token,2" form:"token" json:"token" query:"token"`
+	Authorization   string           `thrift:"authorization,2" header:"Authorization" json:"authorization"`
 	UserProfileInfo *UserProfileInfo `thrift:"user_profile_info,3" form:"user_profile_info" json:"user_profile_info" query:"user_profile_info"`
 }
 
@@ -3194,8 +3148,8 @@ func (p *UserProfileUploadRequest) GetUserID() (v int32) {
 	return p.UserID
 }
 
-func (p *UserProfileUploadRequest) GetToken() (v string) {
-	return p.Token
+func (p *UserProfileUploadRequest) GetAuthorization() (v string) {
+	return p.Authorization
 }
 
 var UserProfileUploadRequest_UserProfileInfo_DEFAULT *UserProfileInfo
@@ -3209,7 +3163,7 @@ func (p *UserProfileUploadRequest) GetUserProfileInfo() (v *UserProfileInfo) {
 
 var fieldIDToName_UserProfileUploadRequest = map[int16]string{
 	1: "user_id",
-	2: "token",
+	2: "authorization",
 	3: "user_profile_info",
 }
 
@@ -3309,7 +3263,7 @@ func (p *UserProfileUploadRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Token = v
+		p.Authorization = v
 	}
 	return nil
 }
@@ -3377,10 +3331,10 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileUploadRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("authorization", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Token); err != nil {
+	if err := oprot.WriteString(p.Authorization); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {

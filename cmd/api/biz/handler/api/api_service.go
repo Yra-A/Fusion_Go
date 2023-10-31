@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/Yra-A/Fusion_Go/cmd/api/biz/handler"
 	"github.com/Yra-A/Fusion_Go/cmd/api/biz/model/api"
+	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
 	"github.com/Yra-A/Fusion_Go/cmd/api/rpc"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/user"
 	"github.com/Yra-A/Fusion_Go/pkg/errno"
@@ -32,17 +33,7 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 // UserLogin .
 // @router /fusion/user/login/ [POST]
 func UserLogin(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.UserLoginRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(api.UserLoginResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	jwt.JwtMiddleware.LoginHandler(ctx, c)
 }
 
 // UserInfo .
@@ -54,6 +45,7 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 		handler.BadResponse(c, err)
 		return
 	}
+
 	kresp, err := rpc.UserInfo(context.Background(), &user.UserInfoRequest{
 		UserId: req.UserID,
 	})
@@ -177,7 +169,6 @@ func UserProfileUpload(ctx context.Context, c *app.RequestContext) {
 	}
 	kresp, err := rpc.UserProfileUpload(context.Background(), &user.UserProfileUploadRequest{
 		UserId: req.UserID,
-		Token:  req.Token,
 		UserProfileInfo: &user.UserProfileInfo{
 			UserId:       req.UserProfileInfo.UserID,
 			MobilePhone:  req.UserProfileInfo.MobilePhone,

@@ -88,8 +88,7 @@ struct UserProfileInfoResponse {
 
 struct UserProfileUploadRequest {
     1: i32 user_id
-    2: string token
-    3: UserProfileInfo user_profile_info
+    2: UserProfileInfo user_profile_info
 }
 
 struct UserProfileUploadResponse {
