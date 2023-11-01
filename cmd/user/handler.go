@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/Yra-A/Fusion_Go/cmd/user/service"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/user"
 	"github.com/Yra-A/Fusion_Go/pkg/errno"
@@ -39,8 +40,14 @@ func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.UserInfoReques
 	resp = new(user.UserInfoResponse)
 	u, err := service.NewQueryUserService(ctx).QueryUser(req.UserId)
 	if err != nil {
-		resp.StatusCode = errno.FailCode
+		resp.StatusCode = errno.Fail.ErrCode
 		resp.StatusMsg = errno.Fail.ErrMsg
+		return resp, nil
+	}
+	fmt.Printf("%#v\n", u)
+	if HasEmpty(u) {
+		resp.StatusCode = errno.UserinfoNotSetErr.ErrCode
+		resp.StatusMsg = errno.UserinfoNotSetErr.ErrMsg
 		return resp, nil
 	}
 	resp.StatusCode = errno.SuccessCode
@@ -48,10 +55,14 @@ func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.UserInfoReques
 	resp.UserInfo = u
 	return resp, nil
 }
+func HasEmpty(u *user.UserInfo) bool {
+	return u.Gender == 0 || u.EnrollmentYear == 0 || u.MobilePhone == "" || u.College == "" || u.Nickname == "" || u.Realname == ""
+
+}
 
 // UserInfoUpload implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserInfoUpload(ctx context.Context, req *user.UserInfoUploadRequest) (resp *user.UserInfoUploadResponse, err error) {
-	klog.CtxDebugf(ctx, "UserInfoUpload called: %d", req.GetUserId())
+	klog.CtxDebugf(ctx, "UserInfoUpload called: %d", req.UserInfo.UserId)
 	resp = new(user.UserInfoUploadResponse)
 	err = service.NewUploadUserService(ctx).UploadUserInfo(req.UserInfo)
 	if err != nil {
@@ -68,18 +79,15 @@ func (s *UserServiceImpl) UserInfoUpload(ctx context.Context, req *user.UserInfo
 func (s *UserServiceImpl) UserProfileInfo(ctx context.Context, req *user.UserProfileInfoRequest) (resp *user.UserProfileInfoResponse, err error) {
 	klog.CtxDebugf(ctx, "UserProfileInfo called: %d", req.GetUserId())
 	resp = new(user.UserProfileInfoResponse)
-	up, err := service.NewQueryUserProfileService(ctx).QueryUserProfile(req.UserId)
+	u, err := service.NewQueryUserProfileService(ctx).QueryUserProfile(req.UserId)
 	if err != nil {
 		resp.StatusCode = errno.FailCode
 		resp.StatusMsg = errno.Fail.ErrMsg
 		return resp, nil
 	}
-	u := &user.UserInfo{}
-	err = service.NewQueryUserService(ctx).FetchUserInfo(req.UserId, u)
 	resp.StatusCode = errno.SuccessCode
 	resp.StatusMsg = errno.Success.ErrMsg
-	resp.UserProfileInfo = up
-	resp.UserInfo = u
+	resp.UserProfileInfo = u
 	return resp, nil
 
 }

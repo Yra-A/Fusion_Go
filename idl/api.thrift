@@ -2,27 +2,29 @@ namespace go api
 
 /* =========================== user =========================== */
 
+
 struct UserInfo {
     1: i32 user_id,
     2: i32 gender,
-    3: string nickname,
-    4: string realname,
-    5: i32 contest_favorite_count,
-    6: string avatar_url,
-    7: i32 enrollment_year,
-    8: string college,
+    4: i32 enrollment_year,
+    3: string mobile_phone
+    5: string college,
+    6: string nickname,
+    7: string realname,
+    8: bool has_profile,
+    9: string avatar_url,
 }
 
 
+
+
 struct UserProfileInfo {
-    1: i32 user_id,
-    2: string mobile_phone,
-    3: string introduction,
-    4: string qq_number,
-    5: string wechat_number,
-    6: list<string> honors,
-    7: list<string> images,
-    8: list<bool> is_show,
+    1: string introduction,
+    2: string qq_number,
+    3: string wechat_number,
+    4: list<string> honors,
+    5: list<string> images,
+    6: UserInfo user_info,
 }
 
 // 用户注册
@@ -35,7 +37,6 @@ struct UserRegisterRequest {
 struct UserRegisterResponse {
     1: i32 status_code,
     2: string status_msg,
-    3: string token,
 }
 
 // 用户登录
@@ -66,9 +67,8 @@ struct UserInfoResponse {
 
 // 上传用户信息
 struct UserInfoUploadRequest {
-    1: i32 user_id
-    2: string authorization (api.header="Authorization")
-    3: UserInfo user_info
+    1: string authorization (api.header="Authorization")
+    2: UserInfo user_info
 }
 
 struct UserInfoUploadResponse {
@@ -87,7 +87,6 @@ struct UserProfileInfoResponse {
     1: i32 status_code,
     2: string status_msg,
     3: UserProfileInfo user_profile_info,
-    4: UserInfo user_info,
 }
 
 // 上传用户档案信息

@@ -16,14 +16,15 @@ func NewUploadUserService(ctx context.Context) *UploadUserService {
 
 func (s *UploadUserService) UploadUserInfo(u *user.UserInfo) error {
 	dbu := &db.UserInfo{
-		UserId:               u.UserId,
-		Gender:               u.Gender,
-		Nickname:             u.Nickname,
-		Realname:             u.Realname,
-		ContestFavoriteCount: u.ContestFavoriteCount,
-		AvatarUrl:            u.AvatarUrl,
-		EnrollmentYear:       u.EnrollmentYear,
-		College:              u.College,
+		UserID:         u.UserId,
+		Gender:         u.Gender,
+		EnrollmentYear: u.EnrollmentYear,
+		MobilePhone:    u.MobilePhone,
+		College:        u.College,
+		Nickname:       u.Nickname,
+		Realname:       u.Realname,
+		HasProfile:     u.HasProfile,
+		AvatarURL:      u.AvatarUrl,
 	}
 	if err := db.AddUserInfo(dbu); err != nil {
 		return err
@@ -33,14 +34,11 @@ func (s *UploadUserService) UploadUserInfo(u *user.UserInfo) error {
 
 func (s *UploadUserService) UploadUserProfileInfo(u *user.UserProfileInfo) error {
 	dbu := &db.UserProfileInfo{
-		UserId:       u.UserId,
-		MobilePhone:  u.MobilePhone,
+		UserID: u.UserInfo.UserId,
+		//TODO:contestfavoritecount
 		Introduction: u.Introduction,
-		QqNumber:     u.QqNumber,
-		WechatNumber: u.WechatNumber,
-		Honors:       u.Honors,
-		Images:       u.Images,
-		IsShow:       u.IsShow,
+		QQNumber:     u.QqNumber,
+		WeChatNumber: u.WechatNumber,
 	}
 	if err := db.AddUserProfileInfo(dbu); err != nil {
 		return err

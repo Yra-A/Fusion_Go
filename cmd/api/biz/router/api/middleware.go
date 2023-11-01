@@ -48,8 +48,9 @@ func _userMw() []app.HandlerFunc {
 }
 
 func _info0Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
 }
 
 func _userinfoMw() []app.HandlerFunc {
@@ -64,8 +65,9 @@ func _uploadMw() []app.HandlerFunc {
 }
 
 func _userinfouploadMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
 }
 
 func _loginMw() []app.HandlerFunc {
@@ -84,8 +86,9 @@ func _profileMw() []app.HandlerFunc {
 }
 
 func _userprofileinfoMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
 }
 
 func _upload0Mw() []app.HandlerFunc {
@@ -94,8 +97,9 @@ func _upload0Mw() []app.HandlerFunc {
 }
 
 func _userprofileuploadMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
 }
 
 func _registerMw() []app.HandlerFunc {

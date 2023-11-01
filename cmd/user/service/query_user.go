@@ -51,14 +51,15 @@ func (s *QueryUserService) FetchUserInfo(user_id int32, u *user.UserInfo) error 
 		return err
 	}
 
-	u.UserId = dbUserInfo.UserId
+	u.UserId = dbUserInfo.UserID
 	u.Gender = dbUserInfo.Gender
+	u.EnrollmentYear = dbUserInfo.EnrollmentYear
+	u.MobilePhone = dbUserInfo.MobilePhone
+	u.College = dbUserInfo.College
 	u.Nickname = dbUserInfo.Nickname
 	u.Realname = dbUserInfo.Realname
-	u.ContestFavoriteCount = dbUserInfo.ContestFavoriteCount
-	u.AvatarUrl = dbUserInfo.AvatarUrl
-	u.EnrollmentYear = dbUserInfo.EnrollmentYear
-	u.College = dbUserInfo.College
+	u.HasProfile = dbUserInfo.HasProfile
+	u.AvatarUrl = dbUserInfo.AvatarURL
 
 	return nil
 }
