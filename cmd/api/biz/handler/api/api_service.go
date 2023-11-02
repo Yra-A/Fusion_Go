@@ -58,14 +58,15 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 	resp.StatusCode = errno.Success.ErrCode
 	resp.StatusMsg = errno.Success.ErrMsg
 	resp.UserInfo = &api.UserInfo{
-		UserID:               u.UserId,
-		Gender:               u.Gender,
-		Nickname:             u.Nickname,
-		Realname:             u.Realname,
-		ContestFavoriteCount: u.ContestFavoriteCount,
-		AvatarURL:            u.AvatarUrl,
-		EnrollmentYear:       u.EnrollmentYear,
-		College:              u.College,
+		UserID:         u.UserId,
+		Gender:         u.Gender,
+		EnrollmentYear: u.EnrollmentYear,
+		MobilePhone:    u.MobilePhone,
+		College:        u.College,
+		Nickname:       u.Nickname,
+		Realname:       u.Realname,
+		HasProfile:     u.HasProfile,
+		AvatarURL:      u.AvatarUrl,
 	}
 	handler.SendResponse(c, resp)
 
@@ -80,21 +81,17 @@ func UserInfoUpload(ctx context.Context, c *app.RequestContext) {
 		handler.BadResponse(c, err)
 		return
 	}
-	if req.GetUserID() != req.UserInfo.UserID {
-		handler.BadResponse(c, errno.ParamErr)
-		return
-	}
 	kresp, err := rpc.UserInfoUpload(context.Background(), &user.UserInfoUploadRequest{
-		UserId: req.UserID,
 		UserInfo: &user.UserInfo{
-			UserId:               req.UserInfo.UserID,
-			Gender:               req.UserInfo.Gender,
-			Nickname:             req.UserInfo.Nickname,
-			Realname:             req.UserInfo.Realname,
-			ContestFavoriteCount: req.UserInfo.ContestFavoriteCount,
-			AvatarUrl:            req.UserInfo.AvatarURL,
-			EnrollmentYear:       req.UserInfo.EnrollmentYear,
-			College:              req.UserInfo.College,
+			UserId:         req.UserInfo.UserID,
+			Gender:         req.UserInfo.Gender,
+			EnrollmentYear: req.UserInfo.EnrollmentYear,
+			MobilePhone:    req.UserInfo.MobilePhone,
+			College:        req.UserInfo.College,
+			Nickname:       req.UserInfo.Nickname,
+			Realname:       req.UserInfo.Realname,
+			HasProfile:     req.UserInfo.HasProfile,
+			AvatarUrl:      req.UserInfo.AvatarURL,
 		},
 	})
 	if err != nil {
@@ -126,30 +123,17 @@ func UserProfileInfo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	up := kresp.UserProfileInfo
-	ui := kresp.UserInfo
+	u := kresp.UserProfileInfo
 	resp := new(api.UserProfileInfoResponse)
 	resp.StatusCode = errno.Success.ErrCode
 	resp.StatusMsg = errno.Success.ErrMsg
 	resp.UserProfileInfo = &api.UserProfileInfo{
-		UserID:       up.UserId,
-		MobilePhone:  up.MobilePhone,
-		Introduction: up.Introduction,
-		QqNumber:     up.QqNumber,
-		WechatNumber: up.WechatNumber,
-		Honors:       up.Honors,
-		Images:       up.Images,
-		IsShow:       up.IsShow,
-	}
-	resp.UserInfo = &api.UserInfo{
-		UserID:               ui.UserId,
-		Gender:               ui.Gender,
-		Nickname:             ui.Nickname,
-		Realname:             ui.Realname,
-		ContestFavoriteCount: ui.ContestFavoriteCount,
-		AvatarURL:            ui.AvatarUrl,
-		EnrollmentYear:       ui.EnrollmentYear,
-		College:              ui.College,
+		Introduction: u.Introduction,
+		QqNumber:     u.QqNumber,
+		WechatNumber: u.WechatNumber,
+		Honors:       u.Honors,
+		Images:       u.Images,
+		UserInfo:     handler.ConvertUserToAPI(u.UserInfo),
 	}
 	handler.SendResponse(c, resp)
 }
@@ -163,21 +147,19 @@ func UserProfileUpload(ctx context.Context, c *app.RequestContext) {
 		handler.BadResponse(c, err)
 		return
 	}
-	if req.GetUserID() != req.UserProfileInfo.UserID {
+	if req.GetUserID() != req.UserProfileInfo.UserInfo.UserID {
 		handler.BadResponse(c, errno.ParamErr)
 		return
 	}
 	kresp, err := rpc.UserProfileUpload(context.Background(), &user.UserProfileUploadRequest{
 		UserId: req.UserID,
 		UserProfileInfo: &user.UserProfileInfo{
-			UserId:       req.UserProfileInfo.UserID,
-			MobilePhone:  req.UserProfileInfo.MobilePhone,
 			Introduction: req.UserProfileInfo.Introduction,
 			QqNumber:     req.UserProfileInfo.QqNumber,
 			WechatNumber: req.UserProfileInfo.WechatNumber,
 			Honors:       req.UserProfileInfo.Honors,
 			Images:       req.UserProfileInfo.Images,
-			IsShow:       req.UserProfileInfo.IsShow,
+			UserInfo:     handler.ConvertAPIToUser(req.UserProfileInfo.UserInfo),
 		},
 	})
 	if err != nil {

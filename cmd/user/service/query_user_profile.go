@@ -19,7 +19,9 @@ func (s *QueryUserProfileService) QueryUserProfile(user_id int32) (*user.UserPro
 	u := &user.UserProfileInfo{}
 	tasks := []TaskFunc{
 		func() error { return s.FetchUserProfileInfo(user_id, u) },
-		//todo add func()...
+		func() error { return s.FetchUserHonors(user_id, u) },
+		func() error { return s.FetchUserImages(user_id, u) },
+		func() error { return s.FetchUserInfo(user_id, u) },
 	}
 
 	errChan := make(chan error, len(tasks))
@@ -40,7 +42,6 @@ func (s *QueryUserProfileService) QueryUserProfile(user_id int32) (*user.UserPro
 		return nil, err
 	default:
 	}
-	u.UserId = user_id
 	return u, nil
 }
 
@@ -49,13 +50,45 @@ func (s *QueryUserProfileService) FetchUserProfileInfo(user_id int32, u *user.Us
 	if err != nil {
 		return err
 	}
-	u.UserId = dbUserProfileInfo.UserId
-	u.MobilePhone = dbUserProfileInfo.MobilePhone
 	u.Introduction = dbUserProfileInfo.Introduction
-	u.QqNumber = dbUserProfileInfo.QqNumber
-	u.WechatNumber = dbUserProfileInfo.WechatNumber
-	u.Honors = dbUserProfileInfo.Honors
-	u.Images = dbUserProfileInfo.Images
-	u.IsShow = dbUserProfileInfo.IsShow
+	u.QqNumber = dbUserProfileInfo.QQNumber
+	u.WechatNumber = dbUserProfileInfo.WeChatNumber
+	return nil
+}
+
+func (s *QueryUserProfileService) FetchUserHonors(user_id int32, u *user.UserProfileInfo) error {
+	dbHonors, err := db.QueryHonorsByUserId(user_id)
+	if err != nil {
+		return err
+	}
+	u.Honors = dbHonors
+	return nil
+}
+
+func (s *QueryUserProfileService) FetchUserImages(user_id int32, u *user.UserProfileInfo) error {
+	dbImages, err := db.QueryImagesByUserId(user_id)
+	if err != nil {
+		return err
+	}
+	u.Images = dbImages
+	return nil
+}
+
+func (s *QueryUserProfileService) FetchUserInfo(user_id int32, u *user.UserProfileInfo) error {
+	dbUserInfo, err := db.QueryUserByUserId(user_id)
+	if err != nil {
+		return err
+	}
+	u.UserInfo = &user.UserInfo{
+		UserId:         dbUserInfo.UserID,
+		Gender:         dbUserInfo.Gender,
+		EnrollmentYear: dbUserInfo.EnrollmentYear,
+		MobilePhone:    dbUserInfo.MobilePhone,
+		College:        dbUserInfo.College,
+		Nickname:       dbUserInfo.Nickname,
+		Realname:       dbUserInfo.Realname,
+		HasProfile:     dbUserInfo.HasProfile,
+		AvatarUrl:      dbUserInfo.AvatarURL,
+	}
 	return nil
 }

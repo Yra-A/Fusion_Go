@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/Yra-A/Fusion_Go/cmd/user/dal/db"
 	"github.com/Yra-A/Fusion_Go/pkg/errno"
 )
@@ -25,7 +24,6 @@ func (s *CheckUserService) CheckUser(username, password string) (int32, error) {
 	if user.Password != password {
 		return 0, errno.InvalidCredentialsErr
 	}
-	fmt.Printf("😂")
 
 	return user.UserID, nil
 }

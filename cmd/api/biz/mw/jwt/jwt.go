@@ -13,7 +13,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/jwt"
 	"net/http"
-	"regexp"
 	"time"
 )
 
@@ -56,11 +55,12 @@ func InitJwt() {
 		},
 		Authorizator: func(data interface{}, ctx context.Context, c *app.RequestContext) bool {
 			//验证已登录成功的用户 data(user_id) 的权限
+			path := c.FullPath()
 			var userId int32
 			if floatId, ok := data.(float64); ok {
 				userId = int32(floatId)
 			}
-			if c.FullPath() == "/fusion/user/info/" {
+			if path == "/fusion/user/info/" {
 				var req api.UserInfoRequest
 				if err != c.BindAndValidate(&req) {
 					return false
@@ -68,7 +68,7 @@ func InitJwt() {
 				if userId != req.UserID {
 					return false
 				}
-			} else if c.FullPath() == "/fusion/user/info/upload/" {
+			} else if path == "/fusion/user/info/upload/" {
 				var req api.UserInfoUploadRequest
 				if err != c.BindAndValidate(&req) {
 					return false
@@ -76,12 +76,20 @@ func InitJwt() {
 				if userId != req.UserInfo.UserID {
 					return false
 				}
-			} else if c.FullPath() == "/fusion/user/profile/info/" {
-				var req api.UserProfileUploadRequest
+			} else if path == "/fusion/user/profile/:user_id" {
+				var req api.UserProfileInfoRequest
 				if err != c.BindAndValidate(&req) {
 					return false
 				}
 				if userId != req.UserID {
+					return false
+				}
+			} else if path == "/fusion/user/profile/upload/" {
+				var req api.UserProfileUploadRequest
+				if err != c.BindAndValidate(&req) {
+					return false
+				}
+				if userId != req.UserID || userId != req.UserProfileInfo.UserInfo.UserID {
 					return false
 				}
 			}
@@ -109,7 +117,6 @@ func InitJwt() {
 		},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
 			path := c.FullPath()
-			userProfileInfoPattern := regexp.MustCompile(`^/fusion/user/profile/info/\d+$`)
 			if path == "/fusion/user/login/" {
 				c.JSON(http.StatusUnauthorized, api.UserLoginResponse{
 					StatusCode: errno.AuthorizationFailedErrCode,
@@ -125,12 +132,12 @@ func InitJwt() {
 					StatusCode: errno.AuthorizationFailedErrCode,
 					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
 				})
-			} else if userProfileInfoPattern.MatchString(path) {
-				c.JSON(http.StatusUnauthorized, api.UserProfileUploadResponse{
+			} else if path == "/fusion/user/profile/:user_id" {
+				c.JSON(http.StatusUnauthorized, api.UserProfileInfoResponse{
 					StatusCode: errno.AuthorizationFailedErrCode,
 					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
 				})
-			} else if path == "/fusion/user/profile/info/upload/" {
+			} else if path == "/fusion/user/profile/upload/" {
 				c.JSON(http.StatusUnauthorized, api.UserProfileUploadResponse{
 					StatusCode: errno.AuthorizationFailedErrCode,
 					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
