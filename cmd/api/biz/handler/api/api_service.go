@@ -10,6 +10,7 @@ import (
 	"github.com/Yra-A/Fusion_Go/cmd/api/rpc"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/user"
 	"github.com/Yra-A/Fusion_Go/pkg/errno"
+	"github.com/Yra-A/Fusion_Go/pkg/utils"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -19,15 +20,18 @@ import (
 func UserRegister(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req api.UserRegisterRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
 		return
 	}
-
+	kresp, err := rpc.UserRegister(context.Background(), &user.UserRegisterRequest{
+		Username: req.Username,
+		Password: req.Password,
+	})
 	resp := new(api.UserRegisterResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
+	handler.SendResponse(c, resp)
 }
 
 // UserLogin .
@@ -101,7 +105,7 @@ func UserInfoUpload(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.UserInfoUploadResponse)
 	resp.StatusCode = kresp.StatusCode
 	resp.StatusMsg = kresp.StatusMsg
-	c.JSON(consts.StatusOK, resp)
+	handler.SendResponse(c, resp)
 }
 
 // UserProfileInfo .
@@ -133,7 +137,7 @@ func UserProfileInfo(ctx context.Context, c *app.RequestContext) {
 		WechatNumber: u.WechatNumber,
 		Honors:       u.Honors,
 		Images:       u.Images,
-		UserInfo:     handler.ConvertUserToAPI(u.UserInfo),
+		UserInfo:     utils.ConvertUserToAPI(u.UserInfo),
 	}
 	handler.SendResponse(c, resp)
 }
@@ -159,7 +163,7 @@ func UserProfileUpload(ctx context.Context, c *app.RequestContext) {
 			WechatNumber: req.UserProfileInfo.WechatNumber,
 			Honors:       req.UserProfileInfo.Honors,
 			Images:       req.UserProfileInfo.Images,
-			UserInfo:     handler.ConvertAPIToUser(req.UserProfileInfo.UserInfo),
+			UserInfo:     utils.ConvertAPIToUser(req.UserProfileInfo.UserInfo),
 		},
 	})
 	if err != nil {

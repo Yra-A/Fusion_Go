@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/Yra-A/Fusion_Go/cmd/user/service"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/user"
 	"github.com/Yra-A/Fusion_Go/pkg/errno"
@@ -14,8 +13,28 @@ type UserServiceImpl struct{}
 
 // UserRegister implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.UserRegisterRequest) (resp *user.UserRegisterResponse, err error) {
-	// TODO: Your code here...
-	return
+	klog.CtxDebugf(ctx, "UserRegister called: %s", req.GetUsername()+" "+req.GetPassword())
+	resp = new(user.UserRegisterResponse)
+	if req.Username == "" || req.Password == "" {
+		resp.StatusCode = errno.EmptyUsernameOrPasswordErr.ErrCode
+		resp.StatusMsg = errno.EmptyUsernameOrPasswordErr.ErrMsg
+		return resp, nil
+	}
+	err = service.NewCreateUserService(ctx).CreateUser(req.Username, req.Password)
+	if err == errno.UserAlreadyExistErr {
+		resp.StatusCode = errno.UserAlreadyExistErr.ErrCode
+		resp.StatusMsg = errno.UserAlreadyExistErr.ErrMsg
+		return resp, nil
+	}
+	if err != nil {
+		resp.StatusCode = errno.Fail.ErrCode
+		resp.StatusMsg = errno.Fail.ErrMsg
+		return resp, nil
+	}
+	resp.StatusCode = errno.Success.ErrCode
+	resp.StatusMsg = errno.Success.ErrMsg
+	return resp, nil
+
 }
 
 // UserLogin implements the UserServiceImpl interface.
@@ -44,7 +63,6 @@ func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.UserInfoReques
 		resp.StatusMsg = errno.Fail.ErrMsg
 		return resp, nil
 	}
-	fmt.Printf("%#v\n", u)
 	if HasEmpty(u) {
 		resp.StatusCode = errno.UserinfoNotSetErr.ErrCode
 		resp.StatusMsg = errno.UserinfoNotSetErr.ErrMsg
