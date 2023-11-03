@@ -92,6 +92,11 @@ func InitJwt() {
 				if userId != req.UserID || userId != req.UserProfileInfo.UserInfo.UserID {
 					return false
 				}
+			} else if path == "/fusion/utils/upload/img" {
+				var req api.UserProfileUploadRequest
+				if err != c.BindAndValidate(&req) {
+					return false
+				}
 			}
 			return true
 		},
@@ -138,6 +143,11 @@ func InitJwt() {
 					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
 				})
 			} else if path == "/fusion/user/profile/upload/" {
+				c.JSON(http.StatusUnauthorized, api.UserProfileUploadResponse{
+					StatusCode: errno.AuthorizationFailedErrCode,
+					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,
+				})
+			} else if path == "/fusion/utils/upload/img" {
 				c.JSON(http.StatusUnauthorized, api.UserProfileUploadResponse{
 					StatusCode: errno.AuthorizationFailedErrCode,
 					StatusMsg:  errno.AuthorizationFailedErr.ErrMsg,

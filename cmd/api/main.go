@@ -3,34 +3,46 @@
 package main
 
 import (
-	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
-	"github.com/Yra-A/Fusion_Go/cmd/api/rpc"
-	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/hertz-contrib/logger/accesslog"
-	hertzlogrus "github.com/hertz-contrib/logger/logrus"
-	"github.com/hertz-contrib/obs-opentelemetry/tracing"
+    "github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
+    "github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/oss"
+    "github.com/Yra-A/Fusion_Go/cmd/api/rpc"
+    "github.com/cloudwego/hertz/pkg/app/server"
+    "github.com/cloudwego/hertz/pkg/common/hlog"
+    "github.com/hertz-contrib/logger/accesslog"
+    hertzlogrus "github.com/hertz-contrib/logger/logrus"
+    "github.com/hertz-contrib/obs-opentelemetry/tracing"
+    "github.com/hertz-contrib/cors"
+    "time"
 )
 
 func Init() {
-	rpc.InitRPC()
-	jwt.InitJwt()
-	logger := hertzlogrus.NewLogger()
-	hlog.SetLogger(logger)
-	hlog.SetLevel(hlog.LevelInfo)
+    rpc.InitRPC()
+    jwt.InitJwt()
+    oss.Init()
+    logger := hertzlogrus.NewLogger()
+    hlog.SetLogger(logger)
+    hlog.SetLevel(hlog.LevelInfo)
 }
 
 func main() {
-	Init()
-	tracer, cfg := tracing.NewServerTracer()
-	h := server.New(
-		server.WithStreamBody(true),
-		//server.WithHostPorts("0.0.0.0:8888"),
-		tracer,
-	)
-	h.Use(accesslog.New(accesslog.WithFormat("[${url}=-=-=${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: ${body}】【req query parameter: ${queryParams}】【response body: ${resBody}】")))
-
-	register(h)
-	h.Use(tracing.ServerMiddleware(cfg))
-	h.Spin()
+    Init()
+    tracer, cfg := tracing.NewServerTracer()
+    h := server.New(
+        server.WithStreamBody(true),
+        //server.WithHostPorts("0.0.0.0:8888"),
+        tracer,
+    )
+    //h.Use(accesslog.New(accesslog.WithFormat("[${url}=-=-=${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: ${body}】【req query parameter: ${queryParams}】【response body: ${resBody}】")))
+    h.Use(accesslog.New(accesslog.WithFormat("[${url}=-=-=${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: xxxx】【req query parameter: xxxx】【response body: ${resBody}】")))
+    h.Use(tracing.ServerMiddleware(cfg))
+    h.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"http://localhost:5174"},
+        AllowMethods:     []string{"POST", "GET", "OPTIONS"},
+        AllowHeaders:     []string{"Content-Type", "Authorization"},
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true, // 前端请求携带凭证如Cookies或HTTP认证的时候需要设置为true
+        MaxAge:           12 * time.Hour,
+    }))
+    register(h)
+    h.Spin()
 }
