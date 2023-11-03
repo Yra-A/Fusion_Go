@@ -59,8 +59,7 @@ func (Image) TableName() string {
 }
 
 type Authentication struct {
-	AuthID   int32  `gorm:"primaryKey;autoIncrement;column:auth_id"`
-	UserID   int32  `gorm:"column:user_id"`
+	UserID   int32  `gorm:"primaryKey;autoIncrement;column:user_id"`
 	Username string `gorm:"column:username"`
 	Password string `gorm:"column:password"`
 }
@@ -87,10 +86,9 @@ var (
 	}
 
 	authentication = &Authentication{
-		AuthID:   1,
 		UserID:   1,
 		Username: "rocketzhu",
-		Password: "123456",
+		Password: "$2a$10$iCvy4yQ0dgHxjcPCITgqzeRO4OCmUWYyo1UM5WqVS277pDo8yJsvi", //12345
 	}
 )
 
@@ -120,6 +118,18 @@ var mockImagesData = []Image{
 		UserID:   3,
 		ImageURL: "http://example.com/image2.jpg",
 	},
+}
+
+func CreateUser(username, password string) error {
+	u := &Authentication{
+		Username: username,
+		Password: password,
+	}
+	//if err := DB.Create(u).Error; err != nil {
+	//	return err
+	//}
+	fmt.Printf("%#v\n", u)
+	return nil
 }
 
 // QueryUserByUserId query user by user_id

@@ -1,4 +1,4 @@
-package handler
+package utils
 
 import (
 	"github.com/Yra-A/Fusion_Go/cmd/api/biz/model/api"
