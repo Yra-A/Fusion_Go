@@ -57,5 +57,12 @@ func Register(r *server.Hertz) {
 				_register.POST("/", append(_userregisterMw(), api.UserRegister)...)
 			}
 		}
+		{
+			_utils := _fusion.Group("/utils", _utilsMw()...)
+			{
+				_upload1 := _utils.Group("/upload", _upload1Mw()...)
+				_upload1.POST("/img", append(_imageuploadMw(), api.ImageUpload)...)
+			}
+		}
 	}
 }

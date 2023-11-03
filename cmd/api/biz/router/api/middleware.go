@@ -111,3 +111,20 @@ func _userregisterMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _utilsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _upload1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _imageuploadMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
+}

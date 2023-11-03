@@ -135,6 +135,17 @@ struct ContestInfoResponse {
     3: Contest contest,
 }
 
+struct imageUploadRequest {
+    1: string authorization (api.header="Authorization")
+    2: binary file (api.form="file")
+}
+
+struct imageUploadResponse {
+    1: i32 status_code,
+    2: string status_msg,
+    3: string image_url,
+}
+
 service ApiService {
     // 用户注册操作
     UserRegisterResponse UserRegister(1: UserRegisterRequest req) (api.post="/fusion/user/register/")
@@ -153,4 +164,10 @@ service ApiService {
     ContestListResponse ContestList(1: ContestListRequest req) (api.get="/fusion/contest/list/")
     // 获取赛事资讯详情
     ContestInfoResponse ContestInfo(1: ContestInfoRequest req) (api.get="/fusion/contest/info/:contest_id")
+
+
+    /* utils */
+
+    // 上传图片
+    imageUploadResponse imageUpload(1: imageUploadRequest req) (api.post="/fusion/utils/upload/img")
 }
