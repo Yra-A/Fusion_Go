@@ -3,23 +3,23 @@
 package api
 
 import (
-    "context"
-    "fmt"
-    "github.com/Yra-A/Fusion_Go/cmd/api/biz/handler"
-    "github.com/Yra-A/Fusion_Go/cmd/api/biz/model/api"
-    "github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
-    "github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/oss"
-    "github.com/Yra-A/Fusion_Go/cmd/api/rpc"
-    "github.com/Yra-A/Fusion_Go/kitex_gen/user"
-    conf "github.com/Yra-A/Fusion_Go/pkg/configs/oss"
-    "github.com/Yra-A/Fusion_Go/pkg/errno"
-    "github.com/Yra-A/Fusion_Go/pkg/utils"
-    "github.com/cloudwego/hertz/pkg/app"
-    "github.com/cloudwego/hertz/pkg/common/hlog"
-    "github.com/cloudwego/hertz/pkg/protocol/consts"
-    "io"
-    "strconv"
-    "time"
+	"context"
+	"fmt"
+	"github.com/Yra-A/Fusion_Go/cmd/api/biz/handler"
+	"github.com/Yra-A/Fusion_Go/cmd/api/biz/model/api"
+	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
+	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/oss"
+	"github.com/Yra-A/Fusion_Go/cmd/api/rpc"
+	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
+	"github.com/Yra-A/Fusion_Go/kitex_gen/user"
+	conf "github.com/Yra-A/Fusion_Go/pkg/configs/oss"
+	"github.com/Yra-A/Fusion_Go/pkg/errno"
+	"github.com/Yra-A/Fusion_Go/pkg/utils"
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"io"
+	"strconv"
+	"time"
 )
 
 // UserRegister .
@@ -44,42 +44,42 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 // UserLogin .
 // @router /fusion/user/login/ [POST]
 func UserLogin(ctx context.Context, c *app.RequestContext) {
-    jwt.JwtMiddleware.LoginHandler(ctx, c)
+	jwt.JwtMiddleware.LoginHandler(ctx, c)
 }
 
 // UserInfo .
 // @router /fusion/user/info/ [GET]
 func UserInfo(ctx context.Context, c *app.RequestContext) {
-    var err error
-    var req api.UserInfoRequest
-    if err = c.BindAndValidate(&req); err != nil {
-        handler.BadResponse(c, err)
-        return
-    }
+	var err error
+	var req api.UserInfoRequest
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
 
-    kresp, err := rpc.UserInfo(context.Background(), &user.UserInfoRequest{
-        UserId: req.UserID,
-    })
-    if err != nil {
-        handler.BadResponse(c, err)
-        return
-    }
-    u := kresp.UserInfo
-    resp := new(api.UserInfoResponse)
-    resp.StatusCode = errno.Success.ErrCode
-    resp.StatusMsg = errno.Success.ErrMsg
-    resp.UserInfo = &api.UserInfo{
-        UserID:         u.UserId,
-        Gender:         u.Gender,
-        EnrollmentYear: u.EnrollmentYear,
-        MobilePhone:    u.MobilePhone,
-        College:        u.College,
-        Nickname:       u.Nickname,
-        Realname:       u.Realname,
-        HasProfile:     u.HasProfile,
-        AvatarURL:      u.AvatarUrl,
-    }
-    handler.SendResponse(c, resp)
+	kresp, err := rpc.UserInfo(context.Background(), &user.UserInfoRequest{
+		UserId: req.UserID,
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	u := kresp.UserInfo
+	resp := new(api.UserInfoResponse)
+	resp.StatusCode = errno.Success.ErrCode
+	resp.StatusMsg = errno.Success.ErrMsg
+	resp.UserInfo = &api.UserInfo{
+		UserID:         u.UserId,
+		Gender:         u.Gender,
+		EnrollmentYear: u.EnrollmentYear,
+		MobilePhone:    u.MobilePhone,
+		College:        u.College,
+		Nickname:       u.Nickname,
+		Realname:       u.Realname,
+		HasProfile:     u.HasProfile,
+		AvatarURL:      u.AvatarUrl,
+	}
+	handler.SendResponse(c, resp)
 
 }
 
@@ -118,21 +118,21 @@ func UserInfoUpload(ctx context.Context, c *app.RequestContext) {
 // UserProfileInfo .
 // @router /fusion/user/profile/{user_id} [GET]
 func UserProfileInfo(ctx context.Context, c *app.RequestContext) {
-    var err error
-    var req api.UserProfileInfoRequest
-    if err = c.BindAndValidate(&req); err != nil {
-        handler.BadResponse(c, err)
-        return
-    }
+	var err error
+	var req api.UserProfileInfoRequest
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
 
-    kresp, err := rpc.UserProfileInfo(context.Background(), &user.UserProfileInfoRequest{
-        UserId: req.UserID,
-    })
+	kresp, err := rpc.UserProfileInfo(context.Background(), &user.UserProfileInfoRequest{
+		UserId: req.UserID,
+	})
 
-    if err != nil {
-        handler.BadResponse(c, err)
-        return
-    }
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
 
 	u := kresp.UserProfileInfo
 	resp := new(api.UserProfileInfoResponse)
@@ -180,84 +180,103 @@ func UserProfileUpload(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.UserProfileUploadResponse)
 	resp.StatusCode = kresp.StatusCode
 	resp.StatusMsg = kresp.StatusMsg
-	c.JSON(consts.StatusOK, resp)
+	handler.SendResponse(c, resp)
 }
 
 // ContestList .
 // @router /fusion/contest/list/ [GET]
 func ContestList(ctx context.Context, c *app.RequestContext) {
-    var err error
-    var req api.ContestListRequest
-    err = c.BindAndValidate(&req)
-    if err != nil {
-        c.String(consts.StatusBadRequest, err.Error())
-        return
-    }
-
-    resp := new(api.ContestListResponse)
-
-    c.JSON(consts.StatusOK, resp)
+	var err error
+	var req api.ContestListRequest
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	kresp, err := rpc.ContestList(context.Background(), &contest.ContestListRequest{
+		Keyword: req.Keyword,
+		Fields:  req.Fields,
+		Formats: req.Formats,
+		Limit:   req.Limit,
+		Offset:  req.Offset,
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	resp := new(api.ContestListResponse)
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
+	resp.Total = kresp.Total
+	resp.ContestList = utils.ConvertBriefInfoToAPI(kresp.ContestList)
+	handler.SendResponse(c, resp)
 }
 
 // ContestInfo .
 // @router /fusion/contest/info/{contest_id} [GET]
 func ContestInfo(ctx context.Context, c *app.RequestContext) {
-    var err error
-    var req api.ContestInfoRequest
-    err = c.BindAndValidate(&req)
-    if err != nil {
-        c.String(consts.StatusBadRequest, err.Error())
-        return
-    }
-
-    resp := new(api.ContestInfoResponse)
-
-    c.JSON(consts.StatusOK, resp)
+	var err error
+	var req api.ContestInfoRequest
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	kresp, err := rpc.ContestInfo(context.Background(), &contest.ContestInfoRequest{
+		ContestId: req.ContestID,
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	resp := new(api.ContestInfoResponse)
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
+	resp.Contest = utils.ConvertContestToAPI(kresp.Contest)
+	handler.SendResponse(c, resp)
 }
 
 // ImageUpload .
 // @router /fusion/utils/upload/img [POST]
 func ImageUpload(ctx context.Context, c *app.RequestContext) {
-    var err error
-    var req api.ImageUploadRequest
-    err = c.BindAndValidate(&req)
-    if err != nil {
-        handler.BadResponse(c, err)
-        return
-    }
-    file, err := c.FormFile("file")
-    if err != nil {
-        handler.BadResponse(c, err)
-        return
-    }
-    src, err := file.Open()
-    defer src.Close()
-    if err != nil {
-        handler.BadResponse(c, err)
-        return
-    }
+	var err error
+	var req api.ImageUploadRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	file, err := c.FormFile("file")
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	src, err := file.Open()
+	defer src.Close()
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
 
-    bytes, err := io.ReadAll(src)
-    if err != nil {
-        handler.BadResponse(c, err)
-        return
-    }
-    req.File = bytes
+	bytes, err := io.ReadAll(src)
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	req.File = bytes
 
-    imageName := utils.NewImageName(time.Now().Unix())
+	imageName := utils.NewImageName(time.Now().Unix())
 
-    err = oss.UploadFile(imageName, req.File)
-    hlog.CtxInfof(ctx, "图片上传大小为:"+strconv.FormatInt(int64(len(req.File)), 10)+"B")
-    if err != nil {
-        hlog.CtxInfof(ctx, "上传图片出现错误: "+err.Error())
-    }
+	err = oss.UploadFile(imageName, req.File)
+	hlog.CtxInfof(ctx, "图片上传大小为:"+strconv.FormatInt(int64(len(req.File)), 10)+"B")
+	if err != nil {
+		hlog.CtxInfof(ctx, "上传图片出现错误: "+err.Error())
+	}
 
-    imgURL := fmt.Sprintf("%s%s", conf.PublicURL, imageName)
+	imgURL := fmt.Sprintf("%s%s", conf.PublicURL, imageName)
 
-    resp := new(api.ImageUploadResponse)
-    resp.StatusCode = 0
-    resp.StatusMsg = "success upload image!"
-    resp.ImageURL = imgURL
+	resp := new(api.ImageUploadResponse)
+	resp.StatusCode = 0
+	resp.StatusMsg = "success upload image!"
+	resp.ImageURL = imgURL
 
-    handler.SendResponse(c, resp)
+	handler.SendResponse(c, resp)
 }

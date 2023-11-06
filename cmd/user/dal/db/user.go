@@ -59,6 +59,7 @@ func (Image) TableName() string {
 }
 
 type Authentication struct {
+	gorm.Model
 	UserID   int32  `gorm:"primaryKey;autoIncrement;column:user_id"`
 	Username string `gorm:"column:username"`
 	Password string `gorm:"column:password"`
