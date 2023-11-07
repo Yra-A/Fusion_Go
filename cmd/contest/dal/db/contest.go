@@ -70,6 +70,22 @@ var contestsData = map[int32]*Contest{
 		Description: "挑战数学模型解决实际问题的能力。",
 		CreatedTime: 1630000000,
 	},
+	4: {
+		ContestID:   4,
+		Title:       "全国大学生电子设计竞赛",
+		Field:       "科技",
+		Format:      "个人",
+		Description: "面向全国大学生的电子设计竞赛。",
+		CreatedTime: 1640000000,
+	},
+	5: {
+		ContestID:   5,
+		Title:       "全国大学生数学建模竞赛",
+		Field:       "科学",
+		Format:      "团队",
+		Description: "面向全国大学生的数学建模竞赛。",
+		CreatedTime: 1650000000,
+	},
 	// ...其他Contest数据
 }
 
