@@ -1,8 +1,10 @@
 package db
 
 import (
+	"github.com/Yra-A/Fusion_Go/cmd/user/dal/db"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
 	"gorm.io/gorm"
+	"sort"
 	"strings"
 )
 
@@ -169,7 +171,7 @@ func QueryContactsByContactIds(contactIds []int32) ([]*Contact, error) {
 // FetchContestList 根据关键字、领域、格式、限制和偏移量来获取赛事列表。
 func FetchContestList(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*contest.ContestBrief, error) {
 	var contestBriefInfos []*contest.ContestBrief
-	query := DB.Model(&Contest{})
+	query := db.DB.Model(&Contest{}).Order("created_time desc")
 
 	// 根据字段和格式筛选
 	if len(fields) > 0 {
@@ -201,32 +203,40 @@ func FetchContestList(keyword string, fields []string, formats []string, limit i
 
 // FetchContestListMock is a mock function to simulate database behavior for testing purposes.
 func FetchContestListMock(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*contest.ContestBrief, error) {
-	var briefInfos []*contest.ContestBrief
-	var filteredContests []*Contest
-
-	// 遍历 contestsData，应用筛选条件
+	contestsSlice := make([]*Contest, 0, len(contestsData))
 	for _, c := range contestsData {
-		// 检查字段和格式是否匹配，以及关键词是否在标题或描述中
+		contestsSlice = append(contestsSlice, c)
+	}
+
+	// 按 CreatedTime 降序排序
+	sort.Slice(contestsSlice, func(i, j int) bool {
+		return contestsSlice[i].CreatedTime > contestsSlice[j].CreatedTime
+	})
+
+	// 过滤排序后的数据
+	filteredSortedContests := []*Contest{}
+	for _, c := range contestsSlice {
 		if (contains(fields, c.Field) || len(fields) == 0) &&
 			(contains(formats, c.Format) || len(formats) == 0) &&
-			(strings.Contains(c.Title, keyword) || strings.Contains(c.Description, keyword) || keyword == "") {
-			filteredContests = append(filteredContests, c)
+			(keyword == "" || strings.Contains(strings.ToLower(c.Title), strings.ToLower(keyword)) || strings.Contains(strings.ToLower(c.Description), strings.ToLower(keyword))) {
+			filteredSortedContests = append(filteredSortedContests, c)
 		}
 	}
 
 	// 应用 offset 和 limit
 	start := int(offset)
-	if start > len(filteredContests) {
-		return nil, nil // 或者返回空切片 []*contest.ContestBrief{}
+	if start >= len(filteredSortedContests) {
+		return nil, nil
 	}
-
 	end := start + int(limit)
-	if end > len(filteredContests) {
-		end = len(filteredContests)
+	if end > len(filteredSortedContests) {
+		end = len(filteredSortedContests)
 	}
+	paginatedContests := filteredSortedContests[start:end]
 
-	// 提取简要信息
-	for _, c := range filteredContests[start:end] {
+	// 创建 ContestBriefInfo 列表
+	briefInfos := make([]*contest.ContestBrief, 0, len(paginatedContests))
+	for _, c := range paginatedContests {
 		briefInfo := &contest.ContestBrief{
 			ContestId:   c.ContestID,
 			Title:       c.Title,
