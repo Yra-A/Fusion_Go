@@ -650,8 +650,7 @@ type UserProfileInfo struct {
 	QqNumber     string    `thrift:"qq_number,2" frugal:"2,default,string" json:"qq_number"`
 	WechatNumber string    `thrift:"wechat_number,3" frugal:"3,default,string" json:"wechat_number"`
 	Honors       []string  `thrift:"honors,4" frugal:"4,default,list<string>" json:"honors"`
-	Images       []string  `thrift:"images,5" frugal:"5,default,list<string>" json:"images"`
-	UserInfo     *UserInfo `thrift:"user_info,6" frugal:"6,default,UserInfo" json:"user_info"`
+	UserInfo     *UserInfo `thrift:"user_info,5" frugal:"5,default,UserInfo" json:"user_info"`
 }
 
 func NewUserProfileInfo() *UserProfileInfo {
@@ -678,10 +677,6 @@ func (p *UserProfileInfo) GetHonors() (v []string) {
 	return p.Honors
 }
 
-func (p *UserProfileInfo) GetImages() (v []string) {
-	return p.Images
-}
-
 var UserProfileInfo_UserInfo_DEFAULT *UserInfo
 
 func (p *UserProfileInfo) GetUserInfo() (v *UserInfo) {
@@ -702,9 +697,6 @@ func (p *UserProfileInfo) SetWechatNumber(val string) {
 func (p *UserProfileInfo) SetHonors(val []string) {
 	p.Honors = val
 }
-func (p *UserProfileInfo) SetImages(val []string) {
-	p.Images = val
-}
 func (p *UserProfileInfo) SetUserInfo(val *UserInfo) {
 	p.UserInfo = val
 }
@@ -714,8 +706,7 @@ var fieldIDToName_UserProfileInfo = map[int16]string{
 	2: "qq_number",
 	3: "wechat_number",
 	4: "honors",
-	5: "images",
-	6: "user_info",
+	5: "user_info",
 }
 
 func (p *UserProfileInfo) IsSetUserInfo() bool {
@@ -782,18 +773,8 @@ func (p *UserProfileInfo) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 5:
-			if fieldTypeId == thrift.LIST {
-				if err = p.ReadField5(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 6:
 			if fieldTypeId == thrift.STRUCT {
-				if err = p.ReadField6(iprot); err != nil {
+				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -881,28 +862,6 @@ func (p *UserProfileInfo) ReadField4(iprot thrift.TProtocol) error {
 }
 
 func (p *UserProfileInfo) ReadField5(iprot thrift.TProtocol) error {
-	_, size, err := iprot.ReadListBegin()
-	if err != nil {
-		return err
-	}
-	p.Images = make([]string, 0, size)
-	for i := 0; i < size; i++ {
-		var _elem string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_elem = v
-		}
-
-		p.Images = append(p.Images, _elem)
-	}
-	if err := iprot.ReadListEnd(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *UserProfileInfo) ReadField6(iprot thrift.TProtocol) error {
 	p.UserInfo = NewUserInfo()
 	if err := p.UserInfo.Read(iprot); err != nil {
 		return err
@@ -934,10 +893,6 @@ func (p *UserProfileInfo) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField5(oprot); err != nil {
 			fieldId = 5
-			goto WriteFieldError
-		}
-		if err = p.writeField6(oprot); err != nil {
-			fieldId = 6
 			goto WriteFieldError
 		}
 
@@ -1036,32 +991,7 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileInfo) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("images", thrift.LIST, 5); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteListBegin(thrift.STRING, len(p.Images)); err != nil {
-		return err
-	}
-	for _, v := range p.Images {
-		if err := oprot.WriteString(v); err != nil {
-			return err
-		}
-	}
-	if err := oprot.WriteListEnd(); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
-}
-
-func (p *UserProfileInfo) writeField6(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user_info", thrift.STRUCT, 6); err != nil {
+	if err = oprot.WriteFieldBegin("user_info", thrift.STRUCT, 5); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := p.UserInfo.Write(oprot); err != nil {
@@ -1072,9 +1002,9 @@ func (p *UserProfileInfo) writeField6(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
 }
 
 func (p *UserProfileInfo) String() string {
@@ -1102,10 +1032,7 @@ func (p *UserProfileInfo) DeepEqual(ano *UserProfileInfo) bool {
 	if !p.Field4DeepEqual(ano.Honors) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.Images) {
-		return false
-	}
-	if !p.Field6DeepEqual(ano.UserInfo) {
+	if !p.Field5DeepEqual(ano.UserInfo) {
 		return false
 	}
 	return true
@@ -1145,20 +1072,7 @@ func (p *UserProfileInfo) Field4DeepEqual(src []string) bool {
 	}
 	return true
 }
-func (p *UserProfileInfo) Field5DeepEqual(src []string) bool {
-
-	if len(p.Images) != len(src) {
-		return false
-	}
-	for i, v := range p.Images {
-		_src := src[i]
-		if strings.Compare(v, _src) != 0 {
-			return false
-		}
-	}
-	return true
-}
-func (p *UserProfileInfo) Field6DeepEqual(src *UserInfo) bool {
+func (p *UserProfileInfo) Field5DeepEqual(src *UserInfo) bool {
 
 	if !p.UserInfo.DeepEqual(src) {
 		return false

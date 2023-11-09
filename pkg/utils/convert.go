@@ -26,7 +26,6 @@ func ConvertUserProfileToAPI(src *user.UserProfileInfo) *api.UserProfileInfo {
 		QqNumber:     src.QqNumber,
 		WechatNumber: src.WechatNumber,
 		Honors:       src.Honors,
-		Images:       src.Images,
 		UserInfo:     ConvertUserToAPI(src.UserInfo),
 	}
 }
@@ -51,7 +50,6 @@ func ConvertAPIProfileToUser(src *api.UserProfileInfo) *user.UserProfileInfo {
 		QqNumber:     src.QqNumber,
 		WechatNumber: src.WechatNumber,
 		Honors:       src.Honors,
-		Images:       src.Images,
 		UserInfo:     ConvertAPIToUser(src.UserInfo),
 	}
 }

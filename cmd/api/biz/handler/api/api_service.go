@@ -143,7 +143,6 @@ func UserProfileInfo(ctx context.Context, c *app.RequestContext) {
 		QqNumber:     u.QqNumber,
 		WechatNumber: u.WechatNumber,
 		Honors:       u.Honors,
-		Images:       u.Images,
 		UserInfo:     utils.ConvertUserToAPI(u.UserInfo),
 	}
 	handler.SendResponse(c, resp)
@@ -169,7 +168,6 @@ func UserProfileUpload(ctx context.Context, c *app.RequestContext) {
 			QqNumber:     req.UserProfileInfo.QqNumber,
 			WechatNumber: req.UserProfileInfo.WechatNumber,
 			Honors:       req.UserProfileInfo.Honors,
-			Images:       req.UserProfileInfo.Images,
 			UserInfo:     utils.ConvertAPIToUser(req.UserProfileInfo.UserInfo),
 		},
 	})

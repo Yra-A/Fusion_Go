@@ -5,6 +5,8 @@ import (
 	"github.com/Yra-A/Fusion_Go/cmd/user/dal/db"
 	"github.com/Yra-A/Fusion_Go/pkg/errno"
 	"github.com/Yra-A/Fusion_Go/pkg/utils"
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
 )
 
 type CreateUserService struct {
@@ -15,21 +17,17 @@ func NewCreateUserService(ctx context.Context) *CreateUserService {
 	return &CreateUserService{ctx: ctx}
 }
 func (s *CreateUserService) CreateUser(username, password string) error {
-	u, err := db.QueryUserByName(username)
-	if err != nil {
+	var err error
+	if _, err = db.QueryUserByName(username); err == nil {
+		return errno.UserAlreadyExistErr
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
 
-	if u != nil {
-		return errno.UserAlreadyExistErr
-	}
 	hash, err := utils.PasswordHash(password)
 	if err != nil {
 		return err
 	}
-	err = db.CreateUser(username, hash)
-	if err != nil {
-		return err
-	}
-	return nil
+	return db.CreateUser(username, hash)
 }

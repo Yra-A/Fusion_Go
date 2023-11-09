@@ -20,7 +20,6 @@ func (s *QueryUserProfileService) QueryUserProfile(user_id int32) (*user.UserPro
 	tasks := []TaskFunc{
 		func() error { return s.FetchUserProfileInfo(user_id, u) },
 		func() error { return s.FetchUserHonors(user_id, u) },
-		func() error { return s.FetchUserImages(user_id, u) },
 		func() error { return s.FetchUserInfo(user_id, u) },
 	}
 
@@ -62,15 +61,6 @@ func (s *QueryUserProfileService) FetchUserHonors(user_id int32, u *user.UserPro
 		return err
 	}
 	u.Honors = dbHonors
-	return nil
-}
-
-func (s *QueryUserProfileService) FetchUserImages(user_id int32, u *user.UserProfileInfo) error {
-	dbImages, err := db.QueryImagesByUserId(user_id)
-	if err != nil {
-		return err
-	}
-	u.Images = dbImages
 	return nil
 }
 

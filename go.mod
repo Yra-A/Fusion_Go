@@ -16,6 +16,7 @@ require (
 	github.com/kitex-contrib/obs-opentelemetry v0.2.3
 	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20230819133448-76093321aa8e
 	github.com/kitex-contrib/registry-etcd v0.2.0
+	github.com/pkg/errors v0.9.1
 	golang.org/x/crypto v0.12.0
 )
 

@@ -15,7 +15,7 @@ func NewUploadUserService(ctx context.Context) *UploadUserService {
 }
 
 func (s *UploadUserService) UploadUserInfo(u *user.UserInfo) error {
-	dbu := &db.UserInfo{
+	dbu := &db.UserProfileInfo{
 		UserID:         u.UserId,
 		Gender:         u.Gender,
 		EnrollmentYear: u.EnrollmentYear,
@@ -26,7 +26,7 @@ func (s *UploadUserService) UploadUserInfo(u *user.UserInfo) error {
 		HasProfile:     u.HasProfile,
 		AvatarURL:      u.AvatarUrl,
 	}
-	if err := db.AddUserInfo(dbu); err != nil {
+	if err := db.AddOrUpdateUserProfileInfo(dbu); err != nil {
 		return err
 	}
 	return nil
@@ -40,7 +40,7 @@ func (s *UploadUserService) UploadUserProfileInfo(u *user.UserProfileInfo) error
 		QQNumber:     u.QqNumber,
 		WeChatNumber: u.WechatNumber,
 	}
-	if err := db.AddUserProfileInfo(dbu); err != nil {
+	if err := db.AddOrUpdateUserProfileInfo(dbu); err != nil {
 		return err
 	}
 	return nil
