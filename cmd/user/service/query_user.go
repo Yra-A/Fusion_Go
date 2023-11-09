@@ -4,6 +4,9 @@ import (
 	"context"
 	"github.com/Yra-A/Fusion_Go/cmd/user/dal/db"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/user"
+	"github.com/Yra-A/Fusion_Go/pkg/errno"
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
 	"sync"
 )
 
@@ -47,6 +50,9 @@ func (s *QueryUserService) QueryUser(user_id int32) (*user.UserInfo, error) {
 }
 func (s *QueryUserService) FetchUserInfo(user_id int32, u *user.UserInfo) error {
 	dbUserInfo, err := db.QueryUserByUserId(user_id)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errno.UserNotExistErr
+	}
 	if err != nil {
 		return err
 	}

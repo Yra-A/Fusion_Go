@@ -23,8 +23,7 @@ struct UserProfileInfo {
     2: string qq_number,
     3: string wechat_number,
     4: list<string> honors,
-    5: list<string> images,
-    6: UserInfo user_info,
+    5: UserInfo user_info,
 }
 
 // 用户注册
