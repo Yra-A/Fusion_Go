@@ -27,7 +27,7 @@ func Init() {
         fmt.Println(err)
     }
 
-    err = DB.AutoMigrate(&TeamInfo{}, &TeamApplication{})
+    err = DB.AutoMigrate(&TeamInfo{}, &TeamApplication{}, &TeamUserRelationship{})
     if err != nil {
         fmt.Println(err)
     }

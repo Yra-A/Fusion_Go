@@ -285,7 +285,6 @@ func ImageUpload(ctx context.Context, c *app.RequestContext) {
 func TeamCreate(ctx context.Context, c *app.RequestContext) {
     var err error
     var req api.TeamCreateRequest
-    fmt.Println(123123123123123123)
     err = c.BindAndValidate(&req)
     if err != nil {
         handler.BadResponse(c, err)
@@ -329,6 +328,7 @@ func TeamList(ctx context.Context, c *app.RequestContext) {
     })
     if err != nil {
         handler.BadResponse(c, err)
+        return
     }
     resp := new(api.TeamListResponse)
     resp.StatusCode = kresp.StatusCode
@@ -356,12 +356,15 @@ func TeamInfo(ctx context.Context, c *app.RequestContext) {
     })
     if err != nil {
         handler.BadResponse(c, err)
+        return
     }
 
     resp := new(api.TeamInfoResponse)
     resp.StatusCode = kresp.StatusCode
     resp.StatusMsg = kresp.StatusMsg
-    resp.TeamInfo = utils.ConverTeamInfoToAPI(kresp.TeamInfo)
+    if kresp.TeamInfo != nil {
+        resp.TeamInfo = utils.ConverTeamInfoToAPI(kresp.TeamInfo)
+    }
 
     handler.SendResponse(c, resp)
 }
@@ -386,6 +389,7 @@ func TeamApplicationSubmit(ctx context.Context, c *app.RequestContext) {
     })
     if err != nil {
         handler.BadResponse(c, err)
+        return
     }
     resp := new(api.TeamApplicationSubmitResponse)
     resp.StatusCode = kresp.StatusCode
@@ -411,12 +415,15 @@ func TeamManageList(ctx context.Context, c *app.RequestContext) {
     })
     if err != nil {
         handler.BadResponse(c, err)
+        return
     }
 
     resp := new(api.TeamManageListResponse)
     resp.StatusCode = kresp.StatusCode
     resp.StatusMsg = kresp.StatusMsg
-    resp.ApplicationList = utils.ConvertApplicationListToAPI(kresp.ApplicationList)
+    if kresp.ApplicationList != nil {
+        resp.ApplicationList = utils.ConvertApplicationListToAPI(kresp.ApplicationList)
+    }
 
     handler.SendResponse(c, resp)
 }
@@ -439,6 +446,7 @@ func TeamManageAction(ctx context.Context, c *app.RequestContext) {
     })
     if err != nil {
         handler.BadResponse(c, err)
+        return
     }
 
     resp := new(api.TeamManageActionResponse)

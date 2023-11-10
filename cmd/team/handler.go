@@ -56,8 +56,6 @@ func (s *TeamServiceImpl) TeamInfo(ctx context.Context, req *team.TeamInfoReques
     resp.StatusMsg = errno.Success.ErrMsg
     resp.TeamInfo = teamInfo
     return resp, nil
-
-    return
 }
 
 // TeamApplicationSubmit implements the TeamServiceImpl interface.

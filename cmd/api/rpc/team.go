@@ -40,10 +40,10 @@ func initTeamRpc() {
 func TeamCreate(ctx context.Context, req *team.TeamCreateRequest) (*team.TeamCreateResponse, error) {
     resp, err := teamClient.TeamCreate(ctx, req)
     if err != nil {
-        return resp, err
+        return nil, err
     }
     if resp.StatusCode != 0 {
-        return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
+        return nil, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
     }
     return resp, nil
 }
@@ -52,10 +52,10 @@ func TeamCreate(ctx context.Context, req *team.TeamCreateRequest) (*team.TeamCre
 func TeamList(ctx context.Context, req *team.TeamListRequest) (*team.TeamListResponse, error) {
     resp, err := teamClient.TeamList(ctx, req)
     if err != nil {
-        return resp, err
+        return nil, err
     }
     if resp.StatusCode != 0 {
-        return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
+        return nil, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
     }
     return resp, nil
 }
@@ -64,10 +64,10 @@ func TeamList(ctx context.Context, req *team.TeamListRequest) (*team.TeamListRes
 func TeamInfo(ctx context.Context, req *team.TeamInfoRequest) (*team.TeamInfoResponse, error) {
     resp, err := teamClient.TeamInfo(ctx, req)
     if err != nil {
-        return resp, err
+        return nil, err
     }
     if resp.StatusCode != 0 {
-        return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
+        return nil, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
     }
     return resp, nil
 }
@@ -76,10 +76,10 @@ func TeamInfo(ctx context.Context, req *team.TeamInfoRequest) (*team.TeamInfoRes
 func TeamApplicationSubmit(ctx context.Context, req *team.TeamApplicationSubmitRequest) (*team.TeamApplicationSubmitResponse, error) {
     resp, err := teamClient.TeamApplicationSubmit(ctx, req)
     if err != nil {
-        return resp, err
+        return nil, err
     }
     if resp.StatusCode != 0 {
-        return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
+        return nil, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
     }
     return resp, nil
 }
@@ -88,10 +88,10 @@ func TeamApplicationSubmit(ctx context.Context, req *team.TeamApplicationSubmitR
 func TeamManageList(ctx context.Context, req *team.TeamManageListRequest) (*team.TeamManageListResponse, error) {
     resp, err := teamClient.TeamManageList(ctx, req)
     if err != nil {
-        return resp, err
+        return nil, err
     }
     if resp.StatusCode != 0 {
-        return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
+        return nil, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
     }
     return resp, nil
 }
@@ -100,10 +100,10 @@ func TeamManageList(ctx context.Context, req *team.TeamManageListRequest) (*team
 func TeamManageAction(ctx context.Context, req *team.TeamManageActionRequest) (*team.TeamManageActionResponse, error) {
     resp, err := teamClient.TeamManageAction(ctx, req)
     if err != nil {
-        return resp, err
+        return nil, err
     }
     if resp.StatusCode != 0 {
-        return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
+        return nil, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
     }
     return resp, nil
 }
