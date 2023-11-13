@@ -128,3 +128,89 @@ func _imageuploadMw() []app.HandlerFunc {
 		jwt.JwtMiddleware.MiddlewareFunc(),
 	}
 }
+
+func _contest_idMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _teamMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _teamlistMw() []app.HandlerFunc {
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
+}
+
+func _teaminfoMw() []app.HandlerFunc {
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
+}
+
+func _team0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _applicationMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _submitMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _teamapplicationsubmitMw() []app.HandlerFunc {
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
+}
+
+func _createMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _teamcreateMw() []app.HandlerFunc {
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
+}
+
+func _manageMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _actionMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _teammanageactionMw() []app.HandlerFunc {
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
+}
+
+func _list0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _teammanagelistMw() []app.HandlerFunc {
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
+}
+
+func _info1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

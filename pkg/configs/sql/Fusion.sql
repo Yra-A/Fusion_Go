@@ -57,7 +57,7 @@ CREATE TABLE `authentication` (
 );
 
 CREATE TABLE `team_info` (
-  `team_id` INT PRIMARY KEY,
+  `team_id` INT PRIMARY KEY AUTO_INCREMENT,
   `contest_id` INT,
   `title` VARCHAR(255),
   `goal` VARCHAR(255),
@@ -86,6 +86,12 @@ CREATE TABLE `article` (
   `contest_id` INT
 );
 
+CREATE TABLE `team_user_relationship` (
+  `team_user_id` INT PRIMARY KEY AUTO INCREMENT,
+  `user_id` INT,
+  `team_id` INT
+);
+
 ALTER TABLE `contest` COMMENT = '存储赛事板块';
 
 ALTER TABLE `contact` COMMENT = '存储竞赛负责人, contest的子表';
@@ -98,12 +104,16 @@ ALTER TABLE `honors` ADD FOREIGN KEY (`user_id`) REFERENCES `user_profile_info` 
 
 ALTER TABLE `user_profile_info` ADD FOREIGN KEY (`user_id`) REFERENCES `authentication` (`user_id`);
 
-ALTER TABLE `team_info` ADD FOREIGN KEY (`contest_id`) REFERENCES `contest` (`contest_id`);
-
-ALTER TABLE `team_info` ADD FOREIGN KEY (`leader_id`) REFERENCES `user_profile_info` (`user_id`);
-
-ALTER TABLE `team_application` ADD FOREIGN KEY (`user_id`) REFERENCES `user_profile_info` (`user_id`);
-
-ALTER TABLE `team_application` ADD FOREIGN KEY (`team_id`) REFERENCES `team_info` (`team_id`);
+-- ALTER TABLE `team_info` ADD FOREIGN KEY (`contest_id`) REFERENCES `contest` (`contest_id`);
+--
+-- ALTER TABLE `team_info` ADD FOREIGN KEY (`leader_id`) REFERENCES `user_profile_info` (`user_id`);
+--
+-- ALTER TABLE `team_application` ADD FOREIGN KEY (`user_id`) REFERENCES `user_profile_info` (`user_id`);
+--
+-- ALTER TABLE `team_application` ADD FOREIGN KEY (`team_id`) REFERENCES `team_info` (`team_id`);
+--
+-- ALTER TABLE `team_user_relationship` ADD FOREIGN KEY (`user_id`) REFERENCES `user_profile_info` (`user_id`);
+--
+-- ALTER TABLE `team_user_relationship` ADD FOREIGN KEY (`team_id`) REFERENCES `team_info` (`team_id`);
 
 ALTER TABLE `article` ADD FOREIGN KEY (`contest_id`) REFERENCES `contest` (`contest_id`);

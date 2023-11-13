@@ -22,8 +22,19 @@ func Register(r *server.Hertz) {
 		{
 			_contest := _fusion.Group("/contest", _contestMw()...)
 			{
-				_info := _contest.Group("/info", _infoMw()...)
-				_info.GET("/:contest_id", append(_contestinfoMw(), api.ContestInfo)...)
+				_contest_id := _contest.Group("/:contest_id", _contest_idMw()...)
+				{
+					_team := _contest_id.Group("/team", _teamMw()...)
+					_team.GET("/list", append(_teamlistMw(), api.TeamList)...)
+					{
+						_info := _team.Group("/info", _infoMw()...)
+						_info.GET("/:team_id", append(_teaminfoMw(), api.TeamInfo)...)
+					}
+				}
+			}
+			{
+				_info0 := _contest.Group("/info", _info0Mw()...)
+				_info0.GET("/:contest_id", append(_contestinfoMw(), api.ContestInfo)...)
 			}
 			{
 				_list := _contest.Group("/list", _listMw()...)
@@ -31,12 +42,37 @@ func Register(r *server.Hertz) {
 			}
 		}
 		{
+			_team0 := _fusion.Group("/team", _team0Mw()...)
+			{
+				_application := _team0.Group("/application", _applicationMw()...)
+				{
+					_submit := _application.Group("/submit", _submitMw()...)
+					_submit.POST("/", append(_teamapplicationsubmitMw(), api.TeamApplicationSubmit)...)
+				}
+			}
+			{
+				_create := _team0.Group("/create", _createMw()...)
+				_create.POST("/", append(_teamcreateMw(), api.TeamCreate)...)
+			}
+			{
+				_manage := _team0.Group("/manage", _manageMw()...)
+				{
+					_action := _manage.Group("/action", _actionMw()...)
+					_action.POST("/", append(_teammanageactionMw(), api.TeamManageAction)...)
+				}
+				{
+					_list0 := _manage.Group("/list", _list0Mw()...)
+					_list0.GET("/", append(_teammanagelistMw(), api.TeamManageList)...)
+				}
+			}
+		}
+		{
 			_user := _fusion.Group("/user", _userMw()...)
 			{
-				_info0 := _user.Group("/info", _info0Mw()...)
-				_info0.GET("/", append(_userinfoMw(), api.UserInfo)...)
+				_info1 := _user.Group("/info", _info1Mw()...)
+				_info1.GET("/", append(_userinfoMw(), api.UserInfo)...)
 				{
-					_upload := _info0.Group("/upload", _uploadMw()...)
+					_upload := _info1.Group("/upload", _uploadMw()...)
 					_upload.POST("/", append(_userinfouploadMw(), api.UserInfoUpload)...)
 				}
 			}
