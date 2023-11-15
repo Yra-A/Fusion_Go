@@ -48,9 +48,7 @@ func _userMw() []app.HandlerFunc {
 }
 
 func _info0Mw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+	return nil
 }
 
 func _userinfoMw() []app.HandlerFunc {
@@ -211,6 +209,16 @@ func _teammanagelistMw() []app.HandlerFunc {
 }
 
 func _info1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _contestcreateMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _create0Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

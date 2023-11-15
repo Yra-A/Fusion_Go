@@ -33,6 +33,10 @@ func Register(r *server.Hertz) {
 				}
 			}
 			{
+				_create := _contest.Group("/create", _createMw()...)
+				_create.POST("/", append(_contestcreateMw(), api.ContestCreate)...)
+			}
+			{
 				_info0 := _contest.Group("/info", _info0Mw()...)
 				_info0.GET("/:contest_id", append(_contestinfoMw(), api.ContestInfo)...)
 			}
@@ -51,8 +55,8 @@ func Register(r *server.Hertz) {
 				}
 			}
 			{
-				_create := _team0.Group("/create", _createMw()...)
-				_create.POST("/", append(_teamcreateMw(), api.TeamCreate)...)
+				_create0 := _team0.Group("/create", _create0Mw()...)
+				_create0.POST("/", append(_teamcreateMw(), api.TeamCreate)...)
 			}
 			{
 				_manage := _team0.Group("/manage", _manageMw()...)

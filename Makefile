@@ -6,6 +6,8 @@ run_api:
 run_user:
 	cd cmd/user && sh ./build.sh && sh ./output/bootstrap.sh
 
+
+
 ## 启动 team 服务
 run_team:
 	cd cmd/team && sh ./build.sh && sh ./output/bootstrap.sh

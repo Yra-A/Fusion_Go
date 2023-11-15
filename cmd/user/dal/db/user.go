@@ -37,14 +37,6 @@ type UserInfo struct {
 	HasProfile     bool
 }
 
-type UserProfile struct {
-	UserID               int32
-	ContestFavoriteCount int32
-	Introduction         string
-	QQNumber             string
-	WeChatNumber         string
-}
-
 type Honors struct {
 	HonorID int32  `gorm:"primary_key;column:honor_id"`
 	UserID  int32  `gorm:"column:user_id"`
@@ -129,10 +121,31 @@ func AddOrUpdateUserProfileInfo(u *UserProfileInfo) error {
 
 // QueryHonorsByUserId 获取某个用户的所有荣誉
 func QueryHonorsByUserId(userId int32) ([]string, error) {
-	var honors []string
+	var honors []Honors
 	if err := DB.Where("user_id = ?", userId).Find(&honors).Error; err != nil {
 		return nil, err
 	}
-	return honors, nil
+	honorStrings := make([]string, 0, len(honors))
+	for _, honor := range honors {
+		honorStrings = append(honorStrings, honor.Honor)
+	}
+	return honorStrings, nil
+}
 
+// AddOrUpdateHonors 更新用户的整个荣誉列表
+func AddOrUpdateHonors(userId int32, honors []string) error {
+	// 删除该用户的所有现有荣誉
+	if err := DB.Where("user_id = ?", userId).Delete(&Honors{}).Error; err != nil {
+		return err
+	}
+	for _, honor := range honors {
+		newHonor := Honors{
+			UserID: userId,
+			Honor:  honor,
+		}
+		if err := DB.Create(&newHonor).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }

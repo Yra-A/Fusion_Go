@@ -19,8 +19,9 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "ContestService"
 	handlerType := (*contest.ContestService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"ContestList": kitex.NewMethodInfo(contestListHandler, newContestServiceContestListArgs, newContestServiceContestListResult, false),
-		"ContestInfo": kitex.NewMethodInfo(contestInfoHandler, newContestServiceContestInfoArgs, newContestServiceContestInfoResult, false),
+		"ContestList":   kitex.NewMethodInfo(contestListHandler, newContestServiceContestListArgs, newContestServiceContestListResult, false),
+		"ContestInfo":   kitex.NewMethodInfo(contestInfoHandler, newContestServiceContestInfoArgs, newContestServiceContestInfoResult, false),
+		"ContestCreate": kitex.NewMethodInfo(contestCreateHandler, newContestServiceContestCreateArgs, newContestServiceContestCreateResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName":     "contest",
@@ -73,6 +74,24 @@ func newContestServiceContestInfoResult() interface{} {
 	return contest.NewContestServiceContestInfoResult()
 }
 
+func contestCreateHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*contest.ContestServiceContestCreateArgs)
+	realResult := result.(*contest.ContestServiceContestCreateResult)
+	success, err := handler.(contest.ContestService).ContestCreate(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newContestServiceContestCreateArgs() interface{} {
+	return contest.NewContestServiceContestCreateArgs()
+}
+
+func newContestServiceContestCreateResult() interface{} {
+	return contest.NewContestServiceContestCreateResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -98,6 +117,16 @@ func (p *kClient) ContestInfo(ctx context.Context, req *contest.ContestInfoReque
 	_args.Req = req
 	var _result contest.ContestServiceContestInfoResult
 	if err = p.c.Call(ctx, "ContestInfo", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ContestCreate(ctx context.Context, req *contest.ContestCreateRequest) (r *contest.ContestCreateResponse, err error) {
+	var _args contest.ContestServiceContestCreateArgs
+	_args.Req = req
+	var _result contest.ContestServiceContestCreateResult
+	if err = p.c.Call(ctx, "ContestCreate", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

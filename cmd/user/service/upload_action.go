@@ -33,6 +33,7 @@ func (s *UploadUserService) UploadUserInfo(u *user.UserInfo) error {
 }
 
 func (s *UploadUserService) UploadUserProfileInfo(u *user.UserProfileInfo) error {
+	s.UploadUserInfo(u.UserInfo)
 	dbu := &db.UserProfileInfo{
 		UserID: u.UserInfo.UserId,
 		//TODO:contestfavoritecount
@@ -41,6 +42,9 @@ func (s *UploadUserService) UploadUserProfileInfo(u *user.UserProfileInfo) error
 		WeChatNumber: u.WechatNumber,
 	}
 	if err := db.AddOrUpdateUserProfileInfo(dbu); err != nil {
+		return err
+	}
+	if err := db.AddOrUpdateHonors(u.UserInfo.UserId, u.Honors); err != nil {
 		return err
 	}
 	return nil
