@@ -160,20 +160,29 @@ func GetTeamApplicationList(user_id int32, team_id int32) ([]*team.TeamApplicati
     }
     var teamApplications []*team.TeamApplication
     for _, t := range teamApplicationList {
-        teamApplications = append(teamApplications, &team.TeamApplication{
-            ApplicationId:   t.ApplicationID,
-            TeamId:          t.TeamID,
-            Reason:          t.Reason,
-            CreatedTime:     t.CreatedTime.Unix(),
-            ApplicationType: t.ApplicationType,
-            MemberInfo: &team.MemberInfo{
-                UserId: t.UserID,
-            },
-        })
+        if t.ApplicationType != 0 {
+            teamApplications = append(teamApplications, &team.TeamApplication{
+                ApplicationId:   t.ApplicationID,
+                TeamId:          t.TeamID,
+                Reason:          t.Reason,
+                CreatedTime:     t.CreatedTime.Unix(),
+                ApplicationType: t.ApplicationType,
+                MemberInfo: &team.MemberInfo{
+                    UserId: t.UserID,
+                },
+            })
+        }
     }
     return teamApplications, nil
 }
 func TeamAddUser(team_id int32, member_id int32) error {
+    var record TeamUserRelationship
+    if err := DB.Where("team_id = ? AND user_id = ?", team_id, member_id).First(&record).Error; err != nil {
+
+    }
+    if record.TeamUserID != 0 {
+        return nil
+    }
     if err := DB.Create(&TeamUserRelationship{
         UserID: member_id,
         TeamID: team_id,
@@ -201,6 +210,7 @@ func TeamManageAction(user_id int32, application_id int32, action_type int32) er
     if action_type == 1 {
         TeamAddUser(teamApplication.TeamID, teamApplication.UserID)
     }
+
     if err := DB.Model(&teamApplication).Update("application_type", 0).Error; err != nil {
         return err
     }

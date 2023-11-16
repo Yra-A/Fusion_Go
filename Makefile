@@ -6,7 +6,9 @@ run_api:
 run_user:
 	cd cmd/user && sh ./build.sh && sh ./output/bootstrap.sh
 
-
+## 启动 contest 服务
+run_contest:
+	cd cmd/contest && sh ./build.sh && sh ./output/bootstrap.sh
 
 ## 启动 team 服务
 run_team:
