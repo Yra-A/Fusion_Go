@@ -1,7 +1,7 @@
 CREATE TABLE `contest` (
   `contest_id` INT PRIMARY KEY COMMENT '赛事资讯ID',
   `title` VARCHAR(255) NOT NULL,
-  `image_url` VARCHAR(255),
+  `image_url` VARCHAR(500),
   `field` VARCHAR(255) COMMENT '竞赛所属类别，如：工科类',
   `format` VARCHAR(255) COMMENT '竞赛形式，如团体赛',
   `description` TEXT,
@@ -16,14 +16,14 @@ CREATE TABLE `contest` (
 );
 
 CREATE TABLE `contact` (
-  `contact_id` INT PRIMARY KEY,
+  `contact_id` INT PRIMARY KEY AUTO_INCREMENT,
   `name` VARCHAR(255),
   `phone` VARCHAR(50),
   `email` VARCHAR(100)
 );
 
 CREATE TABLE `contest_contact_relationship` (
-  `contest_contact_id` INT PRIMARY KEY,
+  `contest_contact_id` INT PRIMARY KEY AUTO_INCREMENT,
   `contact_id` INT,
   `contest_id` INT
 );
@@ -87,7 +87,7 @@ CREATE TABLE `article` (
 );
 
 CREATE TABLE `team_user_relationship` (
-  `team_user_id` INT PRIMARY KEY AUTO INCREMENT,
+  `team_user_id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT,
   `team_id` INT
 );
@@ -96,13 +96,13 @@ ALTER TABLE `contest` COMMENT = '存储赛事板块';
 
 ALTER TABLE `contact` COMMENT = '存储竞赛负责人, contest的子表';
 
-ALTER TABLE `contest_contact_relationship` ADD FOREIGN KEY (`contact_id`) REFERENCES `contact` (`contact_id`);
-
-ALTER TABLE `contest_contact_relationship` ADD FOREIGN KEY (`contest_id`) REFERENCES `contest` (`contest_id`);
-
-ALTER TABLE `honors` ADD FOREIGN KEY (`user_id`) REFERENCES `user_profile_info` (`user_id`);
-
-ALTER TABLE `user_profile_info` ADD FOREIGN KEY (`user_id`) REFERENCES `authentication` (`user_id`);
+-- ALTER TABLE `contest_contact_relationship` ADD FOREIGN KEY (`contact_id`) REFERENCES `contact` (`contact_id`);
+--
+-- ALTER TABLE `contest_contact_relationship` ADD FOREIGN KEY (`contest_id`) REFERENCES `contest` (`contest_id`);
+--
+-- ALTER TABLE `honors` ADD FOREIGN KEY (`user_id`) REFERENCES `user_profile_info` (`user_id`);
+--
+-- ALTER TABLE `user_profile_info` ADD FOREIGN KEY (`user_id`) REFERENCES `authentication` (`user_id`);
 
 -- ALTER TABLE `team_info` ADD FOREIGN KEY (`contest_id`) REFERENCES `contest` (`contest_id`);
 --

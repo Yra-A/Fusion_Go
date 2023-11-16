@@ -1,39 +1,35 @@
 package db
 
 import (
-	"github.com/Yra-A/Fusion_Go/cmd/user/dal/db"
-	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
+	"errors"
 	"gorm.io/gorm"
-	"sort"
-	"strings"
+	"time"
 )
 
 // Contest corresponds to the 'contest' table in the database.
 type Contest struct {
-	gorm.Model
-	ContestID               int32  `gorm:"primary_key;column:contest_id"`
-	Title                   string `gorm:"column:title;not null"`
-	ImageURL                string `gorm:"column:image_url"`
-	Field                   string `gorm:"column:field"`
-	Format                  string `gorm:"column:format"`
-	Description             string `gorm:"column:description;type:text"`
-	Deadline                int32  `gorm:"column:deadline"`
-	Fee                     string `gorm:"column:fee"`
-	TeamSizeMin             int32  `gorm:"column:team_size_min"`
-	TeamSizeMax             int32  `gorm:"column:team_size_max"`
-	ParticipantRequirements string `gorm:"column:participant_requirements;type:text"`
-	OfficialWebsite         string `gorm:"column:official_website"`
-	AdditionalInfo          string `gorm:"column:additional_info;type:text"`
-	CreatedTime             int64  `gorm:"column:created_time"`
+	ContestID               int32     `gorm:"primary_key;column:contest_id"`
+	Title                   string    `gorm:"column:title;not null"`
+	ImageURL                string    `gorm:"column:image_url"`
+	Field                   string    `gorm:"column:field"`
+	Format                  string    `gorm:"column:format"`
+	Description             string    `gorm:"column:description;type:text"`
+	Deadline                int32     `gorm:"column:deadline"`
+	Fee                     string    `gorm:"column:fee"`
+	TeamSizeMin             int32     `gorm:"column:team_size_min"`
+	TeamSizeMax             int32     `gorm:"column:team_size_max"`
+	ParticipantRequirements string    `gorm:"column:participant_requirements;type:text"`
+	OfficialWebsite         string    `gorm:"column:official_website"`
+	AdditionalInfo          string    `gorm:"column:additional_info;type:text"`
+	CreatedTime             time.Time `gorm:"column:created_time"`
 }
 
 func (Contest) TableName() string {
-	return "contests"
+	return "contest"
 }
 
 // Contact corresponds to the 'contact' table in the database.
 type Contact struct {
-	gorm.Model
 	ContactID int32  `gorm:"primary_key;column:contact_id"`
 	Name      string `gorm:"column:name"`
 	Phone     string `gorm:"column:phone"`
@@ -41,7 +37,7 @@ type Contact struct {
 }
 
 func (Contact) TableName() string {
-	return "contacts"
+	return "contact"
 }
 
 // mock
@@ -52,7 +48,6 @@ var contestsData = map[int32]*Contest{
 		Field:       "科技",
 		Format:      "团队",
 		Description: "面向全国的青少年科技创新团队竞赛。",
-		CreatedTime: 1610000000,
 	},
 	2: {
 		ContestID:   2,
@@ -60,7 +55,6 @@ var contestsData = map[int32]*Contest{
 		Field:       "艺术",
 		Format:      "团队",
 		Description: "公开征集城市艺术设计方案，鼓励创意。",
-		CreatedTime: 1620000000,
 	},
 	3: {
 		ContestID:   3,
@@ -68,7 +62,6 @@ var contestsData = map[int32]*Contest{
 		Field:       "科学",
 		Format:      "个人",
 		Description: "挑战数学模型解决实际问题的能力。",
-		CreatedTime: 1630000000,
 	},
 	4: {
 		ContestID:   4,
@@ -76,7 +69,6 @@ var contestsData = map[int32]*Contest{
 		Field:       "科技",
 		Format:      "个人",
 		Description: "面向全国大学生的电子设计竞赛。",
-		CreatedTime: 1640000000,
 	},
 	5: {
 		ContestID:   5,
@@ -84,7 +76,6 @@ var contestsData = map[int32]*Contest{
 		Field:       "科学",
 		Format:      "团队",
 		Description: "面向全国大学生的数学建模竞赛。",
-		CreatedTime: 1650000000,
 	},
 	// ...其他Contest数据
 }
@@ -129,7 +120,6 @@ var relationshipsData = map[int32]*ContestContactRelationship{
 
 // ContestContactRelationship is the join table for the many-to-many relationship between contests and contacts.
 type ContestContactRelationship struct {
-	gorm.Model
 	ContestContactID int32 `gorm:"primary_key;column:contest_contact_id"`
 	ContactID        int32 `gorm:"column:contact_id"`
 	ContestID        int32 `gorm:"column:contest_id"`
@@ -139,55 +129,109 @@ func (ContestContactRelationship) TableName() string {
 	return "contest_contact_relationship"
 }
 
-func QueryContestByContestId(contest_id int32) (*Contest, error) {
-	//var contest Contest
-	//if err := DB.Where("contest_id = ?", contest_id).First(&contest).Error; err != nil {
-	//	return nil, err
-	//}
-	//return &contest, nil
-	contest, ok := contestsData[contest_id]
-	if !ok {
-		return nil, nil
+type ContestBrief struct {
+	ContestID   int32
+	Title       string
+	Description string
+	CreatedTime time.Time
+	Field       string
+	Format      string
+}
+
+func CreateOrUpdateContest(c *Contest) error {
+	var existingContest Contest
+	err := DB.Where("contest_id = ?", c.ContestID).First(&existingContest).Error
+
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
 	}
-	return contest, nil
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return DB.Create(c).Error
+	}
+
+	return DB.Model(&existingContest).Updates(c).Error
+}
+
+func CreateOrUpdateContact(c []*Contact) error {
+	for _, v := range c {
+		var existingContact Contact
+		err := DB.Where("name = ? AND phone = ? AND email = ?", v.Name, v.Phone, v.Email).First(&existingContact).Error
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			if err = DB.Create(v).Error; err != nil {
+				return err
+			}
+			continue
+		}
+		v.ContactID = existingContact.ContactID
+		if err = DB.Model(&existingContact).Updates(v).Error; err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ContestAddContacts(contestID int32, contactIDs []int32) error {
+	for _, contactID := range contactIDs {
+		var relation ContestContactRelationship
+		err := DB.Where("contest_id = ? AND contact_id = ?", contestID, contactID).First(&relation).Error
+
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			newRelation := ContestContactRelationship{
+				ContestID: contestID,
+				ContactID: contactID,
+			}
+			if err = DB.Create(&newRelation).Error; err != nil {
+				return err
+			}
+			continue
+		}
+		if err = DB.Model(&relation).Updates(&ContestContactRelationship{
+			ContestID: contestID,
+			ContactID: contactID,
+		}).Error; err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func QueryContestByContestId(contest_id int32) (*Contest, error) {
+	var contest Contest
+	if err := DB.Where("contest_id = ?", contest_id).First(&contest).Error; err != nil {
+		return nil, err
+	}
+	return &contest, nil
 }
 
 func FindContestContacts(contest_id int32) ([]*ContestContactRelationship, error) {
-	//var contestContacts []*ContestContactRelationship
-	//if err := DB.Where("contest_id = ?", contest_id).Find(&contestContacts).Error; err != nil {
-	//	return nil, err
-	//}
-	//return contestContacts, nil
 	var contestContacts []*ContestContactRelationship
-	for _, v := range relationshipsData {
-		if v.ContestID == contest_id {
-			contestContacts = append(contestContacts, v)
-		}
+	if err := DB.Where("contest_id = ?", contest_id).Find(&contestContacts).Error; err != nil {
+		return nil, err
 	}
 	return contestContacts, nil
 }
 
 func QueryContactsByContactIds(contactIds []int32) ([]*Contact, error) {
-	//var contacts []*Contact
-	//if err := DB.Where("contact_id in ?", contactIds).Find(&contacts).Error; err != nil {
-	//	return nil, err
-	//}
-	//return contacts, nil
 	var contacts []*Contact
-	for _, v := range contactsData {
-		for _, id := range contactIds {
-			if v.ContactID == id {
-				contacts = append(contacts, v)
-			}
-		}
+	if err := DB.Where("contact_id in ?", contactIds).Find(&contacts).Error; err != nil {
+		return nil, err
 	}
 	return contacts, nil
 }
 
 // FetchContestList 根据关键字、领域、格式、限制和偏移量来获取赛事列表。
-func FetchContestList(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*contest.ContestBrief, error) {
-	var contestBriefInfos []*contest.ContestBrief
-	query := db.DB.Model(&Contest{}).Order("created_time desc")
+func FetchContestList(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*ContestBrief, error) {
+	var contestBriefInfos []*ContestBrief
+
+	query := DB.Model(&Contest{}).Order("created_time desc")
 
 	// 根据字段和格式筛选
 	if len(fields) > 0 {
@@ -217,62 +261,62 @@ func FetchContestList(keyword string, fields []string, formats []string, limit i
 	return contestBriefInfos, nil
 }
 
-// FetchContestListMock is a mock function to simulate database behavior for testing purposes.
-func FetchContestListMock(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*contest.ContestBrief, error) {
-	contestsSlice := make([]*Contest, 0, len(contestsData))
-	for _, c := range contestsData {
-		contestsSlice = append(contestsSlice, c)
-	}
-
-	// 按 CreatedTime 降序排序
-	sort.Slice(contestsSlice, func(i, j int) bool {
-		return contestsSlice[i].CreatedTime > contestsSlice[j].CreatedTime
-	})
-
-	// 过滤排序后的数据
-	filteredSortedContests := []*Contest{}
-	for _, c := range contestsSlice {
-		if (contains(fields, c.Field) || len(fields) == 0) &&
-			(contains(formats, c.Format) || len(formats) == 0) &&
-			(keyword == "" || strings.Contains(strings.ToLower(c.Title), strings.ToLower(keyword)) || strings.Contains(strings.ToLower(c.Description), strings.ToLower(keyword))) {
-			filteredSortedContests = append(filteredSortedContests, c)
-		}
-	}
-
-	// 应用 offset 和 limit
-	start := int(offset)
-	if start >= len(filteredSortedContests) {
-		return nil, nil
-	}
-	end := start + int(limit)
-	if end > len(filteredSortedContests) {
-		end = len(filteredSortedContests)
-	}
-	paginatedContests := filteredSortedContests[start:end]
-
-	// 创建 ContestBriefInfo 列表
-	briefInfos := make([]*contest.ContestBrief, 0, len(paginatedContests))
-	for _, c := range paginatedContests {
-		briefInfo := &contest.ContestBrief{
-			ContestId:   c.ContestID,
-			Title:       c.Title,
-			Description: c.Description,
-			CreatedTime: c.CreatedTime,
-			Field:       c.Field,
-			Format:      c.Format,
-		}
-		briefInfos = append(briefInfos, briefInfo)
-	}
-
-	return briefInfos, nil
-}
-
-// 辅助函数，检查切片中是否包含某个字符串
-func contains(slice []string, str string) bool {
-	for _, v := range slice {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
+//// FetchContestListMock is a mock function to simulate database behavior for testing purposes.
+//func FetchContestListMock(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*contest.ContestBrief, error) {
+//	contestsSlice := make([]*Contest, 0, len(contestsData))
+//	for _, c := range contestsData {
+//		contestsSlice = append(contestsSlice, c)
+//	}
+//
+//	// 按 CreatedTime 降序排序
+//	sort.Slice(contestsSlice, func(i, j int) bool {
+//		return contestsSlice[i].CreatedTime.Unix() > contestsSlice[j].CreatedTime.Unix()
+//	})
+//
+//	// 过滤排序后的数据
+//	filteredSortedContests := []*Contest{}
+//	for _, c := range contestsSlice {
+//		if (contains(fields, c.Field) || len(fields) == 0) &&
+//			(contains(formats, c.Format) || len(formats) == 0) &&
+//			(keyword == "" || strings.Contains(strings.ToLower(c.Title), strings.ToLower(keyword)) || strings.Contains(strings.ToLower(c.Description), strings.ToLower(keyword))) {
+//			filteredSortedContests = append(filteredSortedContests, c)
+//		}
+//	}
+//
+//	// 应用 offset 和 limit
+//	start := int(offset)
+//	if start >= len(filteredSortedContests) {
+//		return nil, nil
+//	}
+//	end := start + int(limit)
+//	if end > len(filteredSortedContests) {
+//		end = len(filteredSortedContests)
+//	}
+//	paginatedContests := filteredSortedContests[start:end]
+//
+//	// 创建 ContestBriefInfo 列表
+//	briefInfos := make([]*contest.ContestBrief, 0, len(paginatedContests))
+//	for _, c := range paginatedContests {
+//		briefInfo := &contest.ContestBrief{
+//			ContestId:   c.ContestID,
+//			Title:       c.Title,
+//			Description: c.Description,
+//			CreatedTime: c.CreatedTime.Unix(),
+//			Field:       c.Field,
+//			Format:      c.Format,
+//		}
+//		briefInfos = append(briefInfos, briefInfo)
+//	}
+//
+//	return briefInfos, nil
+//}
+//
+//// 辅助函数，检查切片中是否包含某个字符串
+//func contains(slice []string, str string) bool {
+//	for _, v := range slice {
+//		if v == str {
+//			return true
+//		}
+//	}
+//	return false
+//}

@@ -11,6 +11,21 @@ import (
 // ContestServiceImpl implements the last service interface defined in the IDL.
 type ContestServiceImpl struct{}
 
+// ContestCreate implements the ContestServiceImpl interface.
+func (s *ContestServiceImpl) ContestCreate(ctx context.Context, req *contest.ContestCreateRequest) (resp *contest.ContestCreateResponse, err error) {
+	klog.CtxDebugf(ctx, "ContestCreate called: %v", req.GetContest().ContestId)
+	resp = new(contest.ContestCreateResponse)
+	err = service.NewCreateContestService(ctx).CreateContest(req.Contest)
+	if err != nil {
+		resp.StatusCode = errno.Fail.ErrCode
+		resp.StatusMsg = errno.Fail.ErrMsg
+		return
+	}
+	resp.StatusCode = errno.Success.ErrCode
+	resp.StatusMsg = errno.Success.ErrMsg
+	return resp, nil
+}
+
 // ContestList implements the ContestServiceImpl interface.
 func (s *ContestServiceImpl) ContestList(ctx context.Context, req *contest.ContestListRequest) (resp *contest.ContestListResponse, err error) {
 	klog.CtxDebugf(ctx, "ContestList called")

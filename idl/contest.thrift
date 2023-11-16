@@ -69,9 +69,20 @@ struct ContestInfoResponse {
     3: Contest contest,
 }
 
+struct ContestCreateRequest {
+    1: Contest contest
+}
+
+struct ContestCreateResponse {
+    1: i32 status_code,
+    2: string status_msg,
+}
+
 service ContestService {
     // 获取赛事资讯列表
     ContestListResponse ContestList(1: ContestListRequest req)
     // 获取赛事资讯详情
     ContestInfoResponse ContestInfo(1: ContestInfoRequest req)
+    // 创建赛事资讯
+    ContestCreateResponse ContestCreate(1: ContestCreateRequest req)
 }

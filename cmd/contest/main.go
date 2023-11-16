@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Yra-A/Fusion_Go/cmd/user/dal"
+	"github.com/Yra-A/Fusion_Go/cmd/contest/dal"
 	contest "github.com/Yra-A/Fusion_Go/kitex_gen/contest/contestservice"
 	"github.com/Yra-A/Fusion_Go/pkg/constants"
 	"github.com/Yra-A/Fusion_Go/pkg/middleware"

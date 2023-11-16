@@ -36,6 +36,18 @@ func initContestRpc() {
 	contestClient = c
 }
 
+// ContestCreate 创建赛事【rpc 客户端】
+func ContestCreate(ctx context.Context, req *contest.ContestCreateRequest) (*contest.ContestCreateResponse, error) {
+	resp, err := contestClient.ContestCreate(ctx, req)
+	if err != nil {
+		return resp, err
+	}
+	if resp.StatusCode != 0 {
+		return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
+	}
+	return resp, nil
+}
+
 // ContestList 比赛列表【rpc 客户端】
 func ContestList(ctx context.Context, req *contest.ContestListRequest) (*contest.ContestListResponse, error) {
 	resp, err := contestClient.ContestList(ctx, req)

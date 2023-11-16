@@ -39,7 +39,7 @@ func (s *QueryContestService) FetchContestInfo(contest_id int32, c *contest.Cont
 	c.ContestId = dbc.ContestID
 	c.Title = dbc.Title
 	c.Description = dbc.Description
-	c.CreatedTime = dbc.CreatedTime
+	c.CreatedTime = dbc.CreatedTime.Unix()
 	c.Field = dbc.Field
 	c.Format = dbc.Format
 	c.ImageUrl = dbc.ImageURL

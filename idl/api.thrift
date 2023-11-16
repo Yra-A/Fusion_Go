@@ -131,7 +131,7 @@ struct Contest {
   4: i64 created_time,
   5: string field,
   6: string format,
-  7: string Image_url,
+  7: string image_url,
   8: ContestCoreInfo contest_core_info,
 }
 
@@ -171,6 +171,15 @@ struct ContestInfoResponse {
     1: i32 status_code,
     2: string status_msg,
     3: Contest contest,
+}
+
+struct ContestCreateRequest {
+    1: Contest contest
+}
+
+struct ContestCreateResponse {
+    1: i32 status_code,
+    2: string status_msg,
 }
 
 /* =========================== utils =========================== */
@@ -322,6 +331,8 @@ service ApiService {
     ContestListResponse ContestList(1: ContestListRequest req) (api.get="/fusion/contest/list/")
     // 获取赛事资讯详情
     ContestInfoResponse ContestInfo(1: ContestInfoRequest req) (api.get="/fusion/contest/info/:contest_id")
+    // 创建赛事资讯
+    ContestCreateResponse ContestCreate(1: ContestCreateRequest req) (api.post="/fusion/contest/create/")
 
 
     /* utils */
