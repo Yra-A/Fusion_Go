@@ -1,5 +1,5 @@
 CREATE TABLE `contest` (
-  `contest_id` INT PRIMARY KEY COMMENT '赛事资讯ID',
+  `contest_id` INT PRIMARY KEY AUTO_INCREMENT COMMENT '赛事资讯ID',
   `title` VARCHAR(255) NOT NULL,
   `image_url` VARCHAR(500),
   `field` VARCHAR(255) COMMENT '竞赛所属类别，如：工科类',
@@ -45,7 +45,7 @@ CREATE TABLE `user_profile_info` (
 );
 
 CREATE TABLE `honors` (
-  `honor_id` INT PRIMARY KEY,
+  `honor_id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT,
   `honor` TEXT
 );
@@ -77,7 +77,7 @@ CREATE TABLE `team_application` (
 );
 
 CREATE TABLE `article` (
-  `article_id` INT PRIMARY KEY,
+  `article_id` INT PRIMARY KEY AUTO_INCREMENT,
   `title` VARCHAR(255),
   `author_id` INT,
   `author` VARCHAR(255),
