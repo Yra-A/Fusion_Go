@@ -40,84 +40,6 @@ func (Contact) TableName() string {
 	return "contact"
 }
 
-// mock
-var contestsData = map[int32]*Contest{
-	1: {
-		ContestID:   1,
-		Title:       "全国青少年科技竞赛",
-		Field:       "科技",
-		Format:      "团队",
-		Description: "面向全国的青少年科技创新团队竞赛。",
-	},
-	2: {
-		ContestID:   2,
-		Title:       "城市艺术与设计大赛",
-		Field:       "艺术",
-		Format:      "团队",
-		Description: "公开征集城市艺术设计方案，鼓励创意。",
-	},
-	3: {
-		ContestID:   3,
-		Title:       "全国数学模型挑战赛",
-		Field:       "科学",
-		Format:      "个人",
-		Description: "挑战数学模型解决实际问题的能力。",
-	},
-	4: {
-		ContestID:   4,
-		Title:       "全国大学生电子设计竞赛",
-		Field:       "科技",
-		Format:      "个人",
-		Description: "面向全国大学生的电子设计竞赛。",
-	},
-	5: {
-		ContestID:   5,
-		Title:       "全国大学生数学建模竞赛",
-		Field:       "科学",
-		Format:      "团队",
-		Description: "面向全国大学生的数学建模竞赛。",
-	},
-	// ...其他Contest数据
-}
-
-var contactsData = map[int32]*Contact{
-	1: {
-		// Gorm Model fields are omitted for brevity
-		ContactID: 1,
-		Name:      "Alice",
-		Phone:     "1234567890",
-		Email:     "alice@example.com",
-	},
-	// 其他Contact数据...
-	2: {
-		ContactID: 2,
-		Name:      "Bob",
-		Phone:     "1234567890",
-		Email:     "bob@example.com",
-	},
-}
-
-var relationshipsData = map[int32]*ContestContactRelationship{
-	1: {
-		// Gorm Model fields are omitted for brevity
-		ContestContactID: 1,
-		ContactID:        1,
-		ContestID:        1,
-	},
-	// 其他Relationship数据...
-	2: {
-		// Gorm Model fields are omitted for brevity
-		ContestContactID: 2,
-		ContactID:        2,
-		ContestID:        1,
-	},
-	3: {
-		ContestContactID: 3,
-		ContactID:        1,
-		ContestID:        2,
-	},
-}
-
 // ContestContactRelationship is the join table for the many-to-many relationship between contests and contacts.
 type ContestContactRelationship struct {
 	ContestContactID int32 `gorm:"primary_key;column:contest_contact_id"`
@@ -261,62 +183,16 @@ func FetchContestList(keyword string, fields []string, formats []string, limit i
 	return contestBriefInfos, nil
 }
 
-//// FetchContestListMock is a mock function to simulate database behavior for testing purposes.
-//func FetchContestListMock(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*contest.ContestBrief, error) {
-//	contestsSlice := make([]*Contest, 0, len(contestsData))
-//	for _, c := range contestsData {
-//		contestsSlice = append(contestsSlice, c)
-//	}
-//
-//	// 按 CreatedTime 降序排序
-//	sort.Slice(contestsSlice, func(i, j int) bool {
-//		return contestsSlice[i].CreatedTime.Unix() > contestsSlice[j].CreatedTime.Unix()
-//	})
-//
-//	// 过滤排序后的数据
-//	filteredSortedContests := []*Contest{}
-//	for _, c := range contestsSlice {
-//		if (contains(fields, c.Field) || len(fields) == 0) &&
-//			(contains(formats, c.Format) || len(formats) == 0) &&
-//			(keyword == "" || strings.Contains(strings.ToLower(c.Title), strings.ToLower(keyword)) || strings.Contains(strings.ToLower(c.Description), strings.ToLower(keyword))) {
-//			filteredSortedContests = append(filteredSortedContests, c)
-//		}
-//	}
-//
-//	// 应用 offset 和 limit
-//	start := int(offset)
-//	if start >= len(filteredSortedContests) {
-//		return nil, nil
-//	}
-//	end := start + int(limit)
-//	if end > len(filteredSortedContests) {
-//		end = len(filteredSortedContests)
-//	}
-//	paginatedContests := filteredSortedContests[start:end]
-//
-//	// 创建 ContestBriefInfo 列表
-//	briefInfos := make([]*contest.ContestBrief, 0, len(paginatedContests))
-//	for _, c := range paginatedContests {
-//		briefInfo := &contest.ContestBrief{
-//			ContestId:   c.ContestID,
-//			Title:       c.Title,
-//			Description: c.Description,
-//			CreatedTime: c.CreatedTime.Unix(),
-//			Field:       c.Field,
-//			Format:      c.Format,
-//		}
-//		briefInfos = append(briefInfos, briefInfo)
-//	}
-//
-//	return briefInfos, nil
-//}
-//
-//// 辅助函数，检查切片中是否包含某个字符串
-//func contains(slice []string, str string) bool {
-//	for _, v := range slice {
-//		if v == str {
-//			return true
-//		}
-//	}
-//	return false
-//}
+func FetchContestListByContestIds(contestIds []int32) ([]*ContestBrief, error) {
+	var contestBriefInfos []*ContestBrief
+
+	// 结果将按照contestIds中的顺序排序
+	if err := DB.Model(&Contest{}).
+		Where("contest_id IN ?", contestIds).
+		Select("contest_id, title, description, created_time, field, format").
+		Find(&contestBriefInfos).Error; err != nil {
+		return nil, err
+	}
+
+	return contestBriefInfos, nil
+}

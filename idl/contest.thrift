@@ -30,6 +30,7 @@ struct Contest {
   6: string format,
   7: string image_url,
   8: ContestCoreInfo contest_core_info,
+  9: bool is_favorite,
 }
 
 struct ContestBrief {
@@ -61,6 +62,7 @@ struct ContestListResponse {
 
 struct ContestInfoRequest {
     1: i32 contest_id
+    2: i32 user_id
 }
 
 struct ContestInfoResponse {
@@ -78,6 +80,17 @@ struct ContestCreateResponse {
     2: string status_msg,
 }
 
+
+//The following interface is specifically designed for the 'favorite' module to retrieve favorite contest list
+struct GetContestsByFavoritesRequest {
+    1: list<i32> contest_ids
+}
+
+struct GetContestsByFavoritesResponse {
+    1: list<ContestBriefInfo> contest_list
+}
+
+
 service ContestService {
     // 获取赛事资讯列表
     ContestListResponse ContestList(1: ContestListRequest req)
@@ -85,4 +98,8 @@ service ContestService {
     ContestInfoResponse ContestInfo(1: ContestInfoRequest req)
     // 创建赛事资讯
     ContestCreateResponse ContestCreate(1: ContestCreateRequest req)
+
+    //The following interface is specifically designed for the 'favorite' module to retrieve contest information
+    GetContestsByFavoritesResponse GetContestsByFavorites(1: GetContestsByFavoritesRequest req)
 }
+

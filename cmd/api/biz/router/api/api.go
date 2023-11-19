@@ -46,6 +46,20 @@ func Register(r *server.Hertz) {
 			}
 		}
 		{
+			_favorite := _fusion.Group("/favorite", _favoriteMw()...)
+			{
+				_contest0 := _favorite.Group("/contest", _contest0Mw()...)
+				{
+					_action := _contest0.Group("/action", _actionMw()...)
+					_action.POST("/", append(_contestfavoriteactionMw(), api.ContestFavoriteAction)...)
+				}
+				{
+					_list0 := _contest0.Group("/list", _list0Mw()...)
+					_list0.GET("/", append(_contestfavoritelistMw(), api.ContestFavoriteList)...)
+				}
+			}
+		}
+		{
 			_team0 := _fusion.Group("/team", _team0Mw()...)
 			{
 				_application := _team0.Group("/application", _applicationMw()...)
@@ -61,12 +75,12 @@ func Register(r *server.Hertz) {
 			{
 				_manage := _team0.Group("/manage", _manageMw()...)
 				{
-					_action := _manage.Group("/action", _actionMw()...)
-					_action.POST("/", append(_teammanageactionMw(), api.TeamManageAction)...)
+					_action0 := _manage.Group("/action", _action0Mw()...)
+					_action0.POST("/", append(_teammanageactionMw(), api.TeamManageAction)...)
 				}
 				{
-					_list0 := _manage.Group("/list", _list0Mw()...)
-					_list0.GET("/", append(_teammanagelistMw(), api.TeamManageList)...)
+					_list1 := _manage.Group("/list", _list1Mw()...)
+					_list1.GET("/", append(_teammanagelistMw(), api.TeamManageList)...)
 				}
 			}
 		}

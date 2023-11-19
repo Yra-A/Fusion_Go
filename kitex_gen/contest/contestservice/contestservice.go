@@ -19,9 +19,10 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "ContestService"
 	handlerType := (*contest.ContestService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"ContestList":   kitex.NewMethodInfo(contestListHandler, newContestServiceContestListArgs, newContestServiceContestListResult, false),
-		"ContestInfo":   kitex.NewMethodInfo(contestInfoHandler, newContestServiceContestInfoArgs, newContestServiceContestInfoResult, false),
-		"ContestCreate": kitex.NewMethodInfo(contestCreateHandler, newContestServiceContestCreateArgs, newContestServiceContestCreateResult, false),
+		"ContestList":            kitex.NewMethodInfo(contestListHandler, newContestServiceContestListArgs, newContestServiceContestListResult, false),
+		"ContestInfo":            kitex.NewMethodInfo(contestInfoHandler, newContestServiceContestInfoArgs, newContestServiceContestInfoResult, false),
+		"ContestCreate":          kitex.NewMethodInfo(contestCreateHandler, newContestServiceContestCreateArgs, newContestServiceContestCreateResult, false),
+		"GetContestsByFavorites": kitex.NewMethodInfo(getContestsByFavoritesHandler, newContestServiceGetContestsByFavoritesArgs, newContestServiceGetContestsByFavoritesResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName":     "contest",
@@ -92,6 +93,24 @@ func newContestServiceContestCreateResult() interface{} {
 	return contest.NewContestServiceContestCreateResult()
 }
 
+func getContestsByFavoritesHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*contest.ContestServiceGetContestsByFavoritesArgs)
+	realResult := result.(*contest.ContestServiceGetContestsByFavoritesResult)
+	success, err := handler.(contest.ContestService).GetContestsByFavorites(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newContestServiceGetContestsByFavoritesArgs() interface{} {
+	return contest.NewContestServiceGetContestsByFavoritesArgs()
+}
+
+func newContestServiceGetContestsByFavoritesResult() interface{} {
+	return contest.NewContestServiceGetContestsByFavoritesResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -127,6 +146,16 @@ func (p *kClient) ContestCreate(ctx context.Context, req *contest.ContestCreateR
 	_args.Req = req
 	var _result contest.ContestServiceContestCreateResult
 	if err = p.c.Call(ctx, "ContestCreate", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetContestsByFavorites(ctx context.Context, req *contest.GetContestsByFavoritesRequest) (r *contest.GetContestsByFavoritesResponse, err error) {
+	var _args contest.ContestServiceGetContestsByFavoritesArgs
+	_args.Req = req
+	var _result contest.ContestServiceGetContestsByFavoritesResult
+	if err = p.c.Call(ctx, "GetContestsByFavorites", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
