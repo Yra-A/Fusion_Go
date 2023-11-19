@@ -133,6 +133,7 @@ struct Contest {
   6: string format,
   7: string image_url,
   8: ContestCoreInfo contest_core_info,
+  9: bool is_favorite,
 }
 
 struct ContestBrief {
@@ -165,6 +166,7 @@ struct ContestListResponse {
 
 struct ContestInfoRequest {
     1: i32 contest_id (api.path="contest_id")
+    2: i32 user_id (api.query="user_id")
 }
 
 struct ContestInfoResponse {
@@ -311,6 +313,34 @@ struct TeamManageActionResponse {
     2: string status_msg,
 }
 
+/* =========================== favorite =========================== */
+
+struct ContestFavoriteActionRequest {
+    1: string authorization (api.header="Authorization")
+    2: i32 user_id
+    3: i32 contest_id
+    4: i32 action_type
+}
+
+struct ContestFavoriteActionResponse {
+    1: i32 status_code,
+    2: string status_msg,
+}
+
+
+struct ContestFavoriteListRequest {
+    1: string authorization (api.header="Authorization")
+    2: i32 user_id
+    3: i32 limit
+    4: i32 offset
+}
+
+struct ContestFavoriteListResponse {
+    1: i32 status_code,
+    2: string status_msg,
+    3: list<ContestBriefInfo> contest_list,
+}
+
 service ApiService {
     /* user */
     // 用户注册操作
@@ -353,4 +383,10 @@ service ApiService {
     TeamManageListResponse TeamManageList(1: TeamManageListRequest req) (api.get="/fusion/team/manage/list/")
     // 队伍申请操作
     TeamManageActionResponse TeamManageAction(1: TeamManageActionRequest req) (api.post="/fusion/team/manage/action/")
+
+    /* favorite */
+    // 赛事收藏操作
+    ContestFavoriteActionResponse ContestFavoriteAction(1: ContestFavoriteActionRequest req) (api.post="/fusion/favorite/contest/action/")
+    // 获取赛事收藏列表
+    ContestFavoriteListResponse ContestFavoriteList(1: ContestFavoriteListRequest req) (api.get="/fusion/favorite/contest/list/")
 }

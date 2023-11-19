@@ -1074,6 +1074,7 @@ type Contest struct {
 	Format          string           `thrift:"format,6" frugal:"6,default,string" json:"format"`
 	ImageUrl        string           `thrift:"image_url,7" frugal:"7,default,string" json:"image_url"`
 	ContestCoreInfo *ContestCoreInfo `thrift:"contest_core_info,8" frugal:"8,default,ContestCoreInfo" json:"contest_core_info"`
+	IsFavorite      bool             `thrift:"is_favorite,9" frugal:"9,default,bool" json:"is_favorite"`
 }
 
 func NewContest() *Contest {
@@ -1120,6 +1121,10 @@ func (p *Contest) GetContestCoreInfo() (v *ContestCoreInfo) {
 	}
 	return p.ContestCoreInfo
 }
+
+func (p *Contest) GetIsFavorite() (v bool) {
+	return p.IsFavorite
+}
 func (p *Contest) SetContestId(val int32) {
 	p.ContestId = val
 }
@@ -1144,6 +1149,9 @@ func (p *Contest) SetImageUrl(val string) {
 func (p *Contest) SetContestCoreInfo(val *ContestCoreInfo) {
 	p.ContestCoreInfo = val
 }
+func (p *Contest) SetIsFavorite(val bool) {
+	p.IsFavorite = val
+}
 
 var fieldIDToName_Contest = map[int16]string{
 	1: "contest_id",
@@ -1154,6 +1162,7 @@ var fieldIDToName_Contest = map[int16]string{
 	6: "format",
 	7: "image_url",
 	8: "contest_core_info",
+	9: "is_favorite",
 }
 
 func (p *Contest) IsSetContestCoreInfo() bool {
@@ -1252,6 +1261,16 @@ func (p *Contest) Read(iprot thrift.TProtocol) (err error) {
 		case 8:
 			if fieldTypeId == thrift.STRUCT {
 				if err = p.ReadField8(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 9:
+			if fieldTypeId == thrift.BOOL {
+				if err = p.ReadField9(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -1360,6 +1379,15 @@ func (p *Contest) ReadField8(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *Contest) ReadField9(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadBool(); err != nil {
+		return err
+	} else {
+		p.IsFavorite = v
+	}
+	return nil
+}
+
 func (p *Contest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("Contest"); err != nil {
@@ -1396,6 +1424,10 @@ func (p *Contest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField8(oprot); err != nil {
 			fieldId = 8
+			goto WriteFieldError
+		}
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
 			goto WriteFieldError
 		}
 
@@ -1553,6 +1585,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
 }
 
+func (p *Contest) writeField9(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("is_favorite", thrift.BOOL, 9); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteBool(p.IsFavorite); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
+}
+
 func (p *Contest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1588,6 +1637,9 @@ func (p *Contest) DeepEqual(ano *Contest) bool {
 		return false
 	}
 	if !p.Field8DeepEqual(ano.ContestCoreInfo) {
+		return false
+	}
+	if !p.Field9DeepEqual(ano.IsFavorite) {
 		return false
 	}
 	return true
@@ -1645,6 +1697,13 @@ func (p *Contest) Field7DeepEqual(src string) bool {
 func (p *Contest) Field8DeepEqual(src *ContestCoreInfo) bool {
 
 	if !p.ContestCoreInfo.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+func (p *Contest) Field9DeepEqual(src bool) bool {
+
+	if p.IsFavorite != src {
 		return false
 	}
 	return true
@@ -3103,6 +3162,7 @@ func (p *ContestListResponse) Field4DeepEqual(src []*ContestBriefInfo) bool {
 
 type ContestInfoRequest struct {
 	ContestId int32 `thrift:"contest_id,1" frugal:"1,default,i32" json:"contest_id"`
+	UserId    int32 `thrift:"user_id,2" frugal:"2,default,i32" json:"user_id"`
 }
 
 func NewContestInfoRequest() *ContestInfoRequest {
@@ -3116,12 +3176,20 @@ func (p *ContestInfoRequest) InitDefault() {
 func (p *ContestInfoRequest) GetContestId() (v int32) {
 	return p.ContestId
 }
+
+func (p *ContestInfoRequest) GetUserId() (v int32) {
+	return p.UserId
+}
 func (p *ContestInfoRequest) SetContestId(val int32) {
 	p.ContestId = val
+}
+func (p *ContestInfoRequest) SetUserId(val int32) {
+	p.UserId = val
 }
 
 var fieldIDToName_ContestInfoRequest = map[int16]string{
 	1: "contest_id",
+	2: "user_id",
 }
 
 func (p *ContestInfoRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -3146,6 +3214,16 @@ func (p *ContestInfoRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 1:
 			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -3192,6 +3270,15 @@ func (p *ContestInfoRequest) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *ContestInfoRequest) ReadField2(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.UserId = v
+	}
+	return nil
+}
+
 func (p *ContestInfoRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("ContestInfoRequest"); err != nil {
@@ -3200,6 +3287,10 @@ func (p *ContestInfoRequest) Write(oprot thrift.TProtocol) (err error) {
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
 			goto WriteFieldError
 		}
 
@@ -3238,6 +3329,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
+func (p *ContestInfoRequest) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("user_id", thrift.I32, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.UserId); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
 func (p *ContestInfoRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -3254,12 +3362,22 @@ func (p *ContestInfoRequest) DeepEqual(ano *ContestInfoRequest) bool {
 	if !p.Field1DeepEqual(ano.ContestId) {
 		return false
 	}
+	if !p.Field2DeepEqual(ano.UserId) {
+		return false
+	}
 	return true
 }
 
 func (p *ContestInfoRequest) Field1DeepEqual(src int32) bool {
 
 	if p.ContestId != src {
+		return false
+	}
+	return true
+}
+func (p *ContestInfoRequest) Field2DeepEqual(src int32) bool {
+
+	if p.UserId != src {
 		return false
 	}
 	return true
@@ -3950,12 +4068,394 @@ func (p *ContestCreateResponse) Field2DeepEqual(src string) bool {
 	return true
 }
 
+type GetContestsByFavoritesRequest struct {
+	ContestIds []int32 `thrift:"contest_ids,1" frugal:"1,default,list<i32>" json:"contest_ids"`
+}
+
+func NewGetContestsByFavoritesRequest() *GetContestsByFavoritesRequest {
+	return &GetContestsByFavoritesRequest{}
+}
+
+func (p *GetContestsByFavoritesRequest) InitDefault() {
+	*p = GetContestsByFavoritesRequest{}
+}
+
+func (p *GetContestsByFavoritesRequest) GetContestIds() (v []int32) {
+	return p.ContestIds
+}
+func (p *GetContestsByFavoritesRequest) SetContestIds(val []int32) {
+	p.ContestIds = val
+}
+
+var fieldIDToName_GetContestsByFavoritesRequest = map[int16]string{
+	1: "contest_ids",
+}
+
+func (p *GetContestsByFavoritesRequest) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetContestsByFavoritesRequest[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *GetContestsByFavoritesRequest) ReadField1(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.ContestIds = make([]int32, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem int32
+		if v, err := iprot.ReadI32(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.ContestIds = append(p.ContestIds, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *GetContestsByFavoritesRequest) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("GetContestsByFavoritesRequest"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *GetContestsByFavoritesRequest) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("contest_ids", thrift.LIST, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteListBegin(thrift.I32, len(p.ContestIds)); err != nil {
+		return err
+	}
+	for _, v := range p.ContestIds {
+		if err := oprot.WriteI32(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *GetContestsByFavoritesRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetContestsByFavoritesRequest(%+v)", *p)
+}
+
+func (p *GetContestsByFavoritesRequest) DeepEqual(ano *GetContestsByFavoritesRequest) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.ContestIds) {
+		return false
+	}
+	return true
+}
+
+func (p *GetContestsByFavoritesRequest) Field1DeepEqual(src []int32) bool {
+
+	if len(p.ContestIds) != len(src) {
+		return false
+	}
+	for i, v := range p.ContestIds {
+		_src := src[i]
+		if v != _src {
+			return false
+		}
+	}
+	return true
+}
+
+type GetContestsByFavoritesResponse struct {
+	ContestList []*ContestBriefInfo `thrift:"contest_list,1" frugal:"1,default,list<ContestBriefInfo>" json:"contest_list"`
+}
+
+func NewGetContestsByFavoritesResponse() *GetContestsByFavoritesResponse {
+	return &GetContestsByFavoritesResponse{}
+}
+
+func (p *GetContestsByFavoritesResponse) InitDefault() {
+	*p = GetContestsByFavoritesResponse{}
+}
+
+func (p *GetContestsByFavoritesResponse) GetContestList() (v []*ContestBriefInfo) {
+	return p.ContestList
+}
+func (p *GetContestsByFavoritesResponse) SetContestList(val []*ContestBriefInfo) {
+	p.ContestList = val
+}
+
+var fieldIDToName_GetContestsByFavoritesResponse = map[int16]string{
+	1: "contest_list",
+}
+
+func (p *GetContestsByFavoritesResponse) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetContestsByFavoritesResponse[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *GetContestsByFavoritesResponse) ReadField1(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.ContestList = make([]*ContestBriefInfo, 0, size)
+	for i := 0; i < size; i++ {
+		_elem := NewContestBriefInfo()
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		p.ContestList = append(p.ContestList, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *GetContestsByFavoritesResponse) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("GetContestsByFavoritesResponse"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *GetContestsByFavoritesResponse) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("contest_list", thrift.LIST, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.ContestList)); err != nil {
+		return err
+	}
+	for _, v := range p.ContestList {
+		if err := v.Write(oprot); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *GetContestsByFavoritesResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetContestsByFavoritesResponse(%+v)", *p)
+}
+
+func (p *GetContestsByFavoritesResponse) DeepEqual(ano *GetContestsByFavoritesResponse) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.ContestList) {
+		return false
+	}
+	return true
+}
+
+func (p *GetContestsByFavoritesResponse) Field1DeepEqual(src []*ContestBriefInfo) bool {
+
+	if len(p.ContestList) != len(src) {
+		return false
+	}
+	for i, v := range p.ContestList {
+		_src := src[i]
+		if !v.DeepEqual(_src) {
+			return false
+		}
+	}
+	return true
+}
+
 type ContestService interface {
 	ContestList(ctx context.Context, req *ContestListRequest) (r *ContestListResponse, err error)
 
 	ContestInfo(ctx context.Context, req *ContestInfoRequest) (r *ContestInfoResponse, err error)
 
 	ContestCreate(ctx context.Context, req *ContestCreateRequest) (r *ContestCreateResponse, err error)
+
+	GetContestsByFavorites(ctx context.Context, req *GetContestsByFavoritesRequest) (r *GetContestsByFavoritesResponse, err error)
 }
 
 type ContestServiceClient struct {
@@ -4011,6 +4511,15 @@ func (p *ContestServiceClient) ContestCreate(ctx context.Context, req *ContestCr
 	}
 	return _result.GetSuccess(), nil
 }
+func (p *ContestServiceClient) GetContestsByFavorites(ctx context.Context, req *GetContestsByFavoritesRequest) (r *GetContestsByFavoritesResponse, err error) {
+	var _args ContestServiceGetContestsByFavoritesArgs
+	_args.Req = req
+	var _result ContestServiceGetContestsByFavoritesResult
+	if err = p.Client_().Call(ctx, "GetContestsByFavorites", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
 
 type ContestServiceProcessor struct {
 	processorMap map[string]thrift.TProcessorFunction
@@ -4035,6 +4544,7 @@ func NewContestServiceProcessor(handler ContestService) *ContestServiceProcessor
 	self.AddToProcessorMap("ContestList", &contestServiceProcessorContestList{handler: handler})
 	self.AddToProcessorMap("ContestInfo", &contestServiceProcessorContestInfo{handler: handler})
 	self.AddToProcessorMap("ContestCreate", &contestServiceProcessorContestCreate{handler: handler})
+	self.AddToProcessorMap("GetContestsByFavorites", &contestServiceProcessorGetContestsByFavorites{handler: handler})
 	return self
 }
 func (p *ContestServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -4182,6 +4692,54 @@ func (p *contestServiceProcessorContestCreate) Process(ctx context.Context, seqI
 		result.Success = retval
 	}
 	if err2 = oprot.WriteMessageBegin("ContestCreate", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type contestServiceProcessorGetContestsByFavorites struct {
+	handler ContestService
+}
+
+func (p *contestServiceProcessorGetContestsByFavorites) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := ContestServiceGetContestsByFavoritesArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("GetContestsByFavorites", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := ContestServiceGetContestsByFavoritesResult{}
+	var retval *GetContestsByFavoritesResponse
+	if retval, err2 = p.handler.GetContestsByFavorites(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetContestsByFavorites: "+err2.Error())
+		oprot.WriteMessageBegin("GetContestsByFavorites", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("GetContestsByFavorites", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -5230,6 +5788,352 @@ func (p *ContestServiceContestCreateResult) DeepEqual(ano *ContestServiceContest
 }
 
 func (p *ContestServiceContestCreateResult) Field0DeepEqual(src *ContestCreateResponse) bool {
+
+	if !p.Success.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
+type ContestServiceGetContestsByFavoritesArgs struct {
+	Req *GetContestsByFavoritesRequest `thrift:"req,1" frugal:"1,default,GetContestsByFavoritesRequest" json:"req"`
+}
+
+func NewContestServiceGetContestsByFavoritesArgs() *ContestServiceGetContestsByFavoritesArgs {
+	return &ContestServiceGetContestsByFavoritesArgs{}
+}
+
+func (p *ContestServiceGetContestsByFavoritesArgs) InitDefault() {
+	*p = ContestServiceGetContestsByFavoritesArgs{}
+}
+
+var ContestServiceGetContestsByFavoritesArgs_Req_DEFAULT *GetContestsByFavoritesRequest
+
+func (p *ContestServiceGetContestsByFavoritesArgs) GetReq() (v *GetContestsByFavoritesRequest) {
+	if !p.IsSetReq() {
+		return ContestServiceGetContestsByFavoritesArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *ContestServiceGetContestsByFavoritesArgs) SetReq(val *GetContestsByFavoritesRequest) {
+	p.Req = val
+}
+
+var fieldIDToName_ContestServiceGetContestsByFavoritesArgs = map[int16]string{
+	1: "req",
+}
+
+func (p *ContestServiceGetContestsByFavoritesArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ContestServiceGetContestsByFavoritesArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ContestServiceGetContestsByFavoritesArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ContestServiceGetContestsByFavoritesArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewGetContestsByFavoritesRequest()
+	if err := p.Req.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ContestServiceGetContestsByFavoritesArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("GetContestsByFavorites_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ContestServiceGetContestsByFavoritesArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Req.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *ContestServiceGetContestsByFavoritesArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ContestServiceGetContestsByFavoritesArgs(%+v)", *p)
+}
+
+func (p *ContestServiceGetContestsByFavoritesArgs) DeepEqual(ano *ContestServiceGetContestsByFavoritesArgs) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.Req) {
+		return false
+	}
+	return true
+}
+
+func (p *ContestServiceGetContestsByFavoritesArgs) Field1DeepEqual(src *GetContestsByFavoritesRequest) bool {
+
+	if !p.Req.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
+type ContestServiceGetContestsByFavoritesResult struct {
+	Success *GetContestsByFavoritesResponse `thrift:"success,0,optional" frugal:"0,optional,GetContestsByFavoritesResponse" json:"success,omitempty"`
+}
+
+func NewContestServiceGetContestsByFavoritesResult() *ContestServiceGetContestsByFavoritesResult {
+	return &ContestServiceGetContestsByFavoritesResult{}
+}
+
+func (p *ContestServiceGetContestsByFavoritesResult) InitDefault() {
+	*p = ContestServiceGetContestsByFavoritesResult{}
+}
+
+var ContestServiceGetContestsByFavoritesResult_Success_DEFAULT *GetContestsByFavoritesResponse
+
+func (p *ContestServiceGetContestsByFavoritesResult) GetSuccess() (v *GetContestsByFavoritesResponse) {
+	if !p.IsSetSuccess() {
+		return ContestServiceGetContestsByFavoritesResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *ContestServiceGetContestsByFavoritesResult) SetSuccess(x interface{}) {
+	p.Success = x.(*GetContestsByFavoritesResponse)
+}
+
+var fieldIDToName_ContestServiceGetContestsByFavoritesResult = map[int16]string{
+	0: "success",
+}
+
+func (p *ContestServiceGetContestsByFavoritesResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ContestServiceGetContestsByFavoritesResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ContestServiceGetContestsByFavoritesResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ContestServiceGetContestsByFavoritesResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = NewGetContestsByFavoritesResponse()
+	if err := p.Success.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ContestServiceGetContestsByFavoritesResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("GetContestsByFavorites_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ContestServiceGetContestsByFavoritesResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *ContestServiceGetContestsByFavoritesResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ContestServiceGetContestsByFavoritesResult(%+v)", *p)
+}
+
+func (p *ContestServiceGetContestsByFavoritesResult) DeepEqual(ano *ContestServiceGetContestsByFavoritesResult) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field0DeepEqual(ano.Success) {
+		return false
+	}
+	return true
+}
+
+func (p *ContestServiceGetContestsByFavoritesResult) Field0DeepEqual(src *GetContestsByFavoritesResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Yra-A/Fusion_Go/cmd/contest/dal"
+	"github.com/Yra-A/Fusion_Go/cmd/contest/rpc"
 	contest "github.com/Yra-A/Fusion_Go/kitex_gen/contest/contestservice"
 	"github.com/Yra-A/Fusion_Go/pkg/constants"
 	"github.com/Yra-A/Fusion_Go/pkg/middleware"
@@ -19,6 +20,7 @@ func Init() {
 	klog.SetLogger(kitexlogrus.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	dal.Init()
+	rpc.InitRPC()
 }
 func main() {
 	r, err := etcd.NewEtcdRegistry([]string{constants.EtcdAddress})

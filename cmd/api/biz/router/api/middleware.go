@@ -28,7 +28,6 @@ func _infoMw() []app.HandlerFunc {
 }
 
 func _contestinfoMw() []app.HandlerFunc {
-	// your code...
 	return nil
 }
 
@@ -219,6 +218,38 @@ func _contestcreateMw() []app.HandlerFunc {
 }
 
 func _create0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _favoriteMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _contest0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _contestfavoriteactionMw() []app.HandlerFunc {
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
+}
+
+func _contestfavoritelistMw() []app.HandlerFunc {
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
+}
+
+func _action0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _list1Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

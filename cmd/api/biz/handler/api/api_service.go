@@ -11,6 +11,7 @@ import (
 	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/oss"
 	"github.com/Yra-A/Fusion_Go/cmd/api/rpc"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
+	"github.com/Yra-A/Fusion_Go/kitex_gen/favorite"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/team"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/user"
 	conf "github.com/Yra-A/Fusion_Go/pkg/configs/oss"
@@ -261,6 +262,7 @@ func ContestInfo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	kresp, err := rpc.ContestInfo(context.Background(), &contest.ContestInfoRequest{
+		UserId:    req.UserID,
 		ContestId: req.ContestID,
 	})
 	if err != nil {
@@ -495,5 +497,55 @@ func TeamManageAction(ctx context.Context, c *app.RequestContext) {
 	resp.StatusCode = kresp.StatusCode
 	resp.StatusMsg = kresp.StatusMsg
 
+	handler.SendResponse(c, resp)
+}
+
+// ContestFavoriteAction .
+// @router /fusion/favorite/contest/action/ [POST]
+func ContestFavoriteAction(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.ContestFavoriteActionRequest
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	kresp, err := rpc.ContestFavoriteAction(context.Background(), &favorite.ContestFavoriteActionRequest{
+		UserId:     req.UserID,
+		ContestId:  req.ContestID,
+		ActionType: req.ActionType,
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	resp := new(api.ContestFavoriteActionResponse)
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
+
+	handler.SendResponse(c, resp)
+}
+
+// ContestFavoriteList .
+// @router /fusion/favorite/contest/list/ [GET]
+func ContestFavoriteList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.ContestFavoriteListRequest
+	if err = c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	kresp, err := rpc.ContestFavoriteList(context.Background(), &favorite.ContestFavoriteListRequest{
+		UserId: req.UserID,
+		Limit:  req.Limit,
+		Offset: req.Offset,
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+	resp := new(api.ContestFavoriteListResponse)
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
+	resp.ContestList = utils.ConvertBriefFavoriteInfoToAPI(kresp.ContestList)
 	handler.SendResponse(c, resp)
 }

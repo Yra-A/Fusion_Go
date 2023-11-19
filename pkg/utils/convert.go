@@ -3,6 +3,7 @@ package utils
 import (
 	"github.com/Yra-A/Fusion_Go/cmd/api/biz/model/api"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
+	"github.com/Yra-A/Fusion_Go/kitex_gen/favorite"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/team"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/user"
 )
@@ -18,16 +19,6 @@ func ConvertUserToAPI(src *user.UserInfo) *api.UserInfo {
 		Realname:       src.Realname,
 		HasProfile:     src.HasProfile,
 		AvatarURL:      src.AvatarUrl,
-	}
-}
-
-func ConvertUserProfileToAPI(src *user.UserProfileInfo) *api.UserProfileInfo {
-	return &api.UserProfileInfo{
-		Introduction: src.Introduction,
-		QqNumber:     src.QqNumber,
-		WechatNumber: src.WechatNumber,
-		Honors:       src.Honors,
-		UserInfo:     ConvertUserToAPI(src.UserInfo),
 	}
 }
 
@@ -73,10 +64,29 @@ func ConvertContestToAPI(src *contest.Contest) *api.Contest {
 			AdditionalInfo:          src.ContestCoreInfo.AdditionalInfo,
 			Contact:                 ConvertContactsToAPI(src.ContestCoreInfo.Contact),
 		},
+		IsFavorite: src.IsFavorite,
 	}
 }
 
 func ConvertBriefInfoToAPI(contestList []*contest.ContestBriefInfo) []*api.ContestBriefInfo {
+	apiContestList := make([]*api.ContestBriefInfo, len(contestList))
+	for i, contestInfo := range contestList {
+		apiContest := &api.ContestBriefInfo{
+			ContestBriefInfo: &api.ContestBrief{
+				ContestID:   contestInfo.ContestBriefInfo.ContestId,
+				Title:       contestInfo.ContestBriefInfo.Title,
+				Description: contestInfo.ContestBriefInfo.Description,
+				CreatedTime: contestInfo.ContestBriefInfo.CreatedTime,
+				Field:       contestInfo.ContestBriefInfo.Field,
+				Format:      contestInfo.ContestBriefInfo.Format,
+			},
+		}
+		apiContestList[i] = apiContest
+	}
+	return apiContestList
+}
+
+func ConvertBriefFavoriteInfoToAPI(contestList []*favorite.ContestBriefInfo) []*api.ContestBriefInfo {
 	apiContestList := make([]*api.ContestBriefInfo, len(contestList))
 	for i, contestInfo := range contestList {
 		apiContest := &api.ContestBriefInfo{
@@ -225,4 +235,18 @@ func ConvertApplicationListToAPI(applicationList []*team.TeamApplication) (apiAp
 		apiApplicationList = append(apiApplicationList, ConvertApplicationToAPI(application))
 	}
 	return
+}
+
+func ConvertContestBriefToFavoriteBrief(src *contest.ContestBrief) *favorite.ContestBrief {
+	if src == nil {
+		return nil
+	}
+	return &favorite.ContestBrief{
+		ContestId:   src.ContestId,
+		Title:       src.Title,
+		Description: src.Description,
+		CreatedTime: src.CreatedTime,
+		Field:       src.Field,
+		Format:      src.Format,
+	}
 }

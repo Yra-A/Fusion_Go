@@ -217,3 +217,5 @@ $RECYCLE.BIN/
 /cmd/user/tmp/
 /cmd/api/tmp/
 /cmd/contest/tmp/
+/cmd/favorite/tmp/
+/cmd/team/tmp/

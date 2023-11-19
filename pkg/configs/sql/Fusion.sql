@@ -92,6 +92,13 @@ CREATE TABLE `team_user_relationship` (
   `team_id` INT
 );
 
+CREATE TABLE `user_favorites` (
+  `favorite_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INT,
+  `contest_id` INT,
+  `created_time` DATETIME
+);
+
 ALTER TABLE `contest` COMMENT = '存储赛事板块';
 
 ALTER TABLE `contact` COMMENT = '存储竞赛负责人, contest的子表';

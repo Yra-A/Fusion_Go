@@ -47,7 +47,7 @@ func (s *ContestServiceImpl) ContestList(ctx context.Context, req *contest.Conte
 func (s *ContestServiceImpl) ContestInfo(ctx context.Context, req *contest.ContestInfoRequest) (resp *contest.ContestInfoResponse, err error) {
 	klog.CtxDebugf(ctx, "ContestInfo called: %v", req.GetContestId())
 	resp = new(contest.ContestInfoResponse)
-	c, err := service.NewQueryContestService(ctx).QueryContest(req.ContestId)
+	c, err := service.NewQueryContestService(ctx).QueryContest(req.UserId, req.ContestId)
 	if err != nil {
 		resp.StatusCode = errno.Fail.ErrCode
 		resp.StatusMsg = errno.Fail.ErrMsg
@@ -56,5 +56,16 @@ func (s *ContestServiceImpl) ContestInfo(ctx context.Context, req *contest.Conte
 	resp.StatusCode = errno.Success.ErrCode
 	resp.StatusMsg = errno.Success.ErrMsg
 	resp.Contest = c
+	return resp, nil
+}
+
+// GetContestsByFavorites implements the ContestServiceImpl interface.
+func (s *ContestServiceImpl) GetContestsByFavorites(ctx context.Context, req *contest.GetContestsByFavoritesRequest) (resp *contest.GetContestsByFavoritesResponse, err error) {
+	resp = new(contest.GetContestsByFavoritesResponse)
+	c, err := service.NewGetContestsByFavoritesService(ctx).GetContestsByFavorites(req.ContestIds)
+	if err != nil {
+		return nil, err
+	}
+	resp.ContestList = c
 	return resp, nil
 }

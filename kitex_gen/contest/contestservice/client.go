@@ -14,6 +14,7 @@ type Client interface {
 	ContestList(ctx context.Context, req *contest.ContestListRequest, callOptions ...callopt.Option) (r *contest.ContestListResponse, err error)
 	ContestInfo(ctx context.Context, req *contest.ContestInfoRequest, callOptions ...callopt.Option) (r *contest.ContestInfoResponse, err error)
 	ContestCreate(ctx context.Context, req *contest.ContestCreateRequest, callOptions ...callopt.Option) (r *contest.ContestCreateResponse, err error)
+	GetContestsByFavorites(ctx context.Context, req *contest.GetContestsByFavoritesRequest, callOptions ...callopt.Option) (r *contest.GetContestsByFavoritesResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -58,4 +59,9 @@ func (p *kContestServiceClient) ContestInfo(ctx context.Context, req *contest.Co
 func (p *kContestServiceClient) ContestCreate(ctx context.Context, req *contest.ContestCreateRequest, callOptions ...callopt.Option) (r *contest.ContestCreateResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ContestCreate(ctx, req)
+}
+
+func (p *kContestServiceClient) GetContestsByFavorites(ctx context.Context, req *contest.GetContestsByFavoritesRequest, callOptions ...callopt.Option) (r *contest.GetContestsByFavoritesResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetContestsByFavorites(ctx, req)
 }

@@ -3,7 +3,9 @@ package service
 import (
 	"context"
 	"github.com/Yra-A/Fusion_Go/cmd/contest/dal/db"
+	"github.com/Yra-A/Fusion_Go/cmd/contest/rpc"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
+	"github.com/Yra-A/Fusion_Go/kitex_gen/favorite"
 )
 
 type TaskFunc func() error
@@ -15,11 +17,12 @@ type QueryContestService struct {
 func NewQueryContestService(ctx context.Context) *QueryContestService {
 	return &QueryContestService{ctx: ctx}
 }
-func (s *QueryContestService) QueryContest(contest_id int32) (*contest.Contest, error) {
+func (s *QueryContestService) QueryContest(user_id, contest_id int32) (*contest.Contest, error) {
 	c := &contest.Contest{}
 	tasks := []TaskFunc{
 		func() error { return s.FetchContestInfo(contest_id, c) },
 		func() error { return s.FetchContactInfo(contest_id, c) },
+		func() error { return s.FetchFavoriteStatus(user_id, contest_id, c) },
 	}
 
 	for _, task := range tasks {
@@ -81,4 +84,18 @@ func (s *QueryContestService) FetchContactInfo(contest_id int32, c *contest.Cont
 		}
 	}
 	return nil
+}
+
+func (s *QueryContestService) FetchFavoriteStatus(user_id int32, contest_id int32, c *contest.Contest) error {
+	if user_id == 0 {
+		c.IsFavorite = false
+		return nil
+	} else {
+		kresp, err := rpc.QueryFavoriteStatusByUserId(s.ctx, &favorite.QueryFavoriteStatusByUserIdRequest{UserId: user_id, ContestId: contest_id})
+		if err != nil {
+			return err
+		}
+		c.IsFavorite = kresp.IsFavorite
+		return nil
+	}
 }
