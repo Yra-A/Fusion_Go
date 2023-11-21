@@ -38,7 +38,6 @@ CREATE TABLE `user_profile_info` (
   `realname` VARCHAR(255),
   `avatar_url` VARCHAR(255),
   `hasProfile` BOOLEAN,
-  `contest_favorite_count` INT,
   `introduction` TEXT,
   `qq_number` VARCHAR(50),
   `wechat_number` VARCHAR(50)

@@ -6,19 +6,18 @@ import (
 )
 
 type UserProfileInfo struct {
-	UserID               int32  `gorm:"primary_key;column:user_id"`
-	Gender               int32  `gorm:"column:gender"`
-	EnrollmentYear       int32  `gorm:"column:enrollment_year"`
-	MobilePhone          string `gorm:"column:mobile_phone"`
-	College              string `gorm:"column:college"`
-	Nickname             string `gorm:"column:nickname"`
-	Realname             string `gorm:"column:realname"`
-	AvatarURL            string `gorm:"column:avatar_url"`
-	HasProfile           bool   `gorm:"column:hasProfile"`
-	ContestFavoriteCount int32  `gorm:"column:contest_favorite_count"`
-	Introduction         string `gorm:"column:introduction"`
-	QQNumber             string `gorm:"column:qq_number"`
-	WeChatNumber         string `gorm:"column:wechat_number"`
+	UserID         int32  `gorm:"primary_key;column:user_id"`
+	Gender         int32  `gorm:"column:gender"`
+	EnrollmentYear int32  `gorm:"column:enrollment_year"`
+	MobilePhone    string `gorm:"column:mobile_phone"`
+	College        string `gorm:"column:college"`
+	Nickname       string `gorm:"column:nickname"`
+	Realname       string `gorm:"column:realname"`
+	AvatarURL      string `gorm:"column:avatar_url"`
+	HasProfile     bool   `gorm:"column:hasProfile"`
+	Introduction   string `gorm:"column:introduction"`
+	QQNumber       string `gorm:"column:qq_number"`
+	WeChatNumber   string `gorm:"column:wechat_number"`
 }
 
 func (UserProfileInfo) TableName() string {
@@ -148,4 +147,9 @@ func AddOrUpdateHonors(userId int32, honors []string) error {
 		}
 	}
 	return nil
+}
+
+// UpdateHasProfile 更新用户是否填写了个人档案的状态
+func UpdateHasProfile(userId int32, hasProfile bool) error {
+	return DB.Model(&UserProfileInfo{}).Where("user_id = ?", userId).Update("hasProfile", hasProfile).Error
 }

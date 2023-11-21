@@ -33,10 +33,11 @@ func (s *UploadUserService) UploadUserInfo(u *user.UserInfo) error {
 }
 
 func (s *UploadUserService) UploadUserProfileInfo(u *user.UserProfileInfo) error {
-	s.UploadUserInfo(u.UserInfo)
+	if err := s.UploadUserInfo(u.UserInfo); err != nil {
+		return err
+	}
 	dbu := &db.UserProfileInfo{
-		UserID: u.UserInfo.UserId,
-		//TODO:contestfavoritecount
+		UserID:       u.UserInfo.UserId,
 		Introduction: u.Introduction,
 		QQNumber:     u.QqNumber,
 		WeChatNumber: u.WechatNumber,
@@ -47,5 +48,24 @@ func (s *UploadUserService) UploadUserProfileInfo(u *user.UserProfileInfo) error
 	if err := db.AddOrUpdateHonors(u.UserInfo.UserId, u.Honors); err != nil {
 		return err
 	}
-	return nil
+	return db.UpdateHasProfile(u.UserInfo.UserId, true)
+}
+
+func (s *UploadUserService) UpdateHasProfile(userId int32) error {
+	profile, err := db.QueryUserProfileByUserId(userId)
+	if err != nil {
+		return err
+	}
+
+	honors, err := db.QueryHonorsByUserId(userId)
+	if err != nil {
+		return err
+	}
+
+	// 检查至少有一个字段是否有值
+	hasProfile := profile.Introduction != "" || profile.QQNumber != "" || profile.WeChatNumber != "" || len(honors) > 0
+	profile.HasProfile = hasProfile
+
+	// 更新 UserProfile 信息
+	return db.UpdateHasProfile(userId, hasProfile)
 }
