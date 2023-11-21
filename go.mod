@@ -7,6 +7,7 @@ require (
 	github.com/apache/thrift v0.19.0
 	github.com/cloudwego/hertz v0.7.1
 	github.com/cloudwego/kitex v0.7.3
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/hertz-contrib/cors v0.0.0-20230423034624-2bc83a8400f0
 	github.com/hertz-contrib/gzip v0.0.1
 	github.com/hertz-contrib/jwt v1.0.2
@@ -17,12 +18,15 @@ require (
 	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20230819133448-76093321aa8e
 	github.com/kitex-contrib/registry-etcd v0.2.0
 	github.com/pkg/errors v0.9.1
-	golang.org/x/crypto v0.12.0
+	golang.org/x/crypto v0.14.0
 )
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/onsi/ginkgo v1.16.5 // indirect
+	github.com/onsi/gomega v1.30.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 )
@@ -83,10 +87,10 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/arch v0.2.0 // indirect
-	golang.org/x/net v0.14.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
-	golang.org/x/text v0.12.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/genproto v0.0.0-20230526203410-71b5a4ffd15e // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230526203410-71b5a4ffd15e // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230526203410-71b5a4ffd15e // indirect
