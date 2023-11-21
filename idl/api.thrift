@@ -339,6 +339,7 @@ struct ContestFavoriteListResponse {
     1: i32 status_code,
     2: string status_msg,
     3: list<ContestBriefInfo> contest_list,
+    4: i32 total
 }
 
 service ApiService {

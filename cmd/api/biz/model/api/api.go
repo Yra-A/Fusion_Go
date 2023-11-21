@@ -12327,6 +12327,7 @@ type ContestFavoriteListResponse struct {
 	StatusCode  int32               `thrift:"status_code,1" form:"status_code" json:"status_code" query:"status_code"`
 	StatusMsg   string              `thrift:"status_msg,2" form:"status_msg" json:"status_msg" query:"status_msg"`
 	ContestList []*ContestBriefInfo `thrift:"contest_list,3" form:"contest_list" json:"contest_list" query:"contest_list"`
+	Total       int32               `thrift:"total,4" form:"total" json:"total" query:"total"`
 }
 
 func NewContestFavoriteListResponse() *ContestFavoriteListResponse {
@@ -12345,10 +12346,15 @@ func (p *ContestFavoriteListResponse) GetContestList() (v []*ContestBriefInfo) {
 	return p.ContestList
 }
 
+func (p *ContestFavoriteListResponse) GetTotal() (v int32) {
+	return p.Total
+}
+
 var fieldIDToName_ContestFavoriteListResponse = map[int16]string{
 	1: "status_code",
 	2: "status_msg",
 	3: "contest_list",
+	4: "total",
 }
 
 func (p *ContestFavoriteListResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -12393,6 +12399,16 @@ func (p *ContestFavoriteListResponse) Read(iprot thrift.TProtocol) (err error) {
 		case 3:
 			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -12468,6 +12484,15 @@ func (p *ContestFavoriteListResponse) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *ContestFavoriteListResponse) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.Total = v
+	}
+	return nil
+}
+
 func (p *ContestFavoriteListResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("ContestFavoriteListResponse"); err != nil {
@@ -12484,6 +12509,10 @@ func (p *ContestFavoriteListResponse) Write(oprot thrift.TProtocol) (err error) 
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 
@@ -12562,6 +12591,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *ContestFavoriteListResponse) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("total", thrift.I32, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.Total); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *ContestFavoriteListResponse) String() string {

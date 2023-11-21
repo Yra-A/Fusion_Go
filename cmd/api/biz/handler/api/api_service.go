@@ -547,5 +547,6 @@ func ContestFavoriteList(ctx context.Context, c *app.RequestContext) {
 	resp.StatusCode = kresp.StatusCode
 	resp.StatusMsg = kresp.StatusMsg
 	resp.ContestList = utils.ConvertBriefFavoriteInfoToAPI(kresp.ContestList)
+	resp.Total = kresp.Total
 	handler.SendResponse(c, resp)
 }

@@ -39,6 +39,7 @@ func (s *FavoriteServiceImpl) ContestFavoriteList(ctx context.Context, req *favo
 	resp.StatusCode = errno.Success.ErrCode
 	resp.StatusMsg = errno.Success.ErrMsg
 	resp.ContestList = c
+	resp.Total = int32(len(c))
 	return resp, nil
 }
 
