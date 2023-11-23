@@ -36,11 +36,13 @@ func main() {
     //h.Use(accesslog.New(accesslog.WithFormat("[${url}=-=-=${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: ${body}】【req query parameter: ${queryParams}】【response body: xxxx】")))
     h.Use(tracing.ServerMiddleware(cfg))
     h.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"http://localhost:5174"},         // 允许添加的请求源
-        AllowMethods:     []string{"POST", "GET", "OPTIONS"},        // 允许添加的请求方法
-        AllowHeaders:     []string{"Content-Type", "Authorization"}, // 允许添加的请求头
-        ExposeHeaders:    []string{"Content-Length"},                // 暴露给客户端的响应头
-        AllowCredentials: true,                                      // 前端请求携带凭证如Cookies或HTTP认证的时候需要设置为true
+        AllowAllOrigins: true, // 允许来自任意 origin 的客户端访问服务端资源
+        //AllowOrigins: []string{"http://101.35.229.143", "http://101.35.229.143/"}, // 允许添加的请求源
+        AllowMethods: []string{"POST", "GET", "OPTIONS"}, // 允许添加的请求方法
+        //AllowHeaders:     []string{"Content-Type", "Authorization", "Origin", "Content-Length"}, // 允许添加的请求头
+        AllowHeaders:     []string{"*"},              // 允许添加的请求头
+        ExposeHeaders:    []string{"Content-Length"}, // 暴露给客户端的响应头
+        AllowCredentials: true,                       // 前端请求携带凭证如Cookies或HTTP认证的时候需要设置为true
         MaxAge:           12 * time.Hour,
     }))
     register(h)
