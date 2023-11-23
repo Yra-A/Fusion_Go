@@ -156,10 +156,10 @@ func FetchContestList(keyword string, fields []string, formats []string, limit i
 	query := DB.Model(&Contest{}).Order("created_time desc")
 
 	// 根据字段和格式筛选
-	if len(fields) > 0 {
+	if len(fields) > 0 && fields[0] != "" {
 		query = query.Where("field IN ?", fields)
 	}
-	if len(formats) > 0 {
+	if len(formats) > 0 && formats[0] != "" {
 		query = query.Where("format IN ?", formats)
 	}
 
@@ -179,7 +179,6 @@ func FetchContestList(keyword string, fields []string, formats []string, limit i
 	if err := query.Find(&contestBriefInfos).Error; err != nil {
 		return nil, err
 	}
-
 	return contestBriefInfos, nil
 }
 
