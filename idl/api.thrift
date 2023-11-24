@@ -345,25 +345,25 @@ struct ContestFavoriteListResponse {
 service ApiService {
     /* user */
     // 用户注册操作
-    UserRegisterResponse UserRegister(1: UserRegisterRequest req) (api.post="/fusion/user/register/")
+    UserRegisterResponse UserRegister(1: UserRegisterRequest req) (api.post="/fusion/user/register")
     // 用户登录操作
-    UserLoginResponse UserLogin(1: UserLoginRequest req) (api.post="/fusion/user/login/")
+    UserLoginResponse UserLogin(1: UserLoginRequest req) (api.post="/fusion/user/login")
     // 获取用户信息
-    UserInfoResponse UserInfo(1: UserInfoRequest req) (api.get="/fusion/user/info/")
+    UserInfoResponse UserInfo(1: UserInfoRequest req) (api.get="/fusion/user/info")
     // 上传用户信息
-    UserInfoUploadResponse UserInfoUpload(1: UserInfoUploadRequest req) (api.post="/fusion/user/info/upload/")
+    UserInfoUploadResponse UserInfoUpload(1: UserInfoUploadRequest req) (api.post="/fusion/user/info/upload")
     // 获取用户档案信息
     UserProfileInfoResponse UserProfileInfo(1: UserProfileInfoRequest req) (api.get="/fusion/user/profile/:user_id")
     // 上传用户档案信息
-    UserProfileUploadResponse UserProfileUpload(1: UserProfileUploadRequest req) (api.post="/fusion/user/profile/upload/")
+    UserProfileUploadResponse UserProfileUpload(1: UserProfileUploadRequest req) (api.post="/fusion/user/profile/upload")
 
     /* contest */
     // 获取赛事资讯列表
-    ContestListResponse ContestList(1: ContestListRequest req) (api.get="/fusion/contest/list/")
+    ContestListResponse ContestList(1: ContestListRequest req) (api.get="/fusion/contest/list")
     // 获取赛事资讯详情
     ContestInfoResponse ContestInfo(1: ContestInfoRequest req) (api.get="/fusion/contest/info/:contest_id")
     // 创建赛事资讯
-    ContestCreateResponse ContestCreate(1: ContestCreateRequest req) (api.post="/fusion/contest/create/")
+    ContestCreateResponse ContestCreate(1: ContestCreateRequest req) (api.post="/fusion/contest/create")
 
 
     /* utils */
@@ -373,21 +373,21 @@ service ApiService {
 
     /* team */
     // 创建队伍
-    TeamCreateResponse TeamCreate(1: TeamCreateRequest req) (api.post="/fusion/team/create/")
+    TeamCreateResponse TeamCreate(1: TeamCreateRequest req) (api.post="/fusion/team/create")
     // 获取队伍列表
     TeamListResponse TeamList(1: TeamListRequest req) (api.get="/fusion/contest/:contest_id/team/list")
     // 获取队伍详情
     TeamInfoResponse TeamInfo(1: TeamInfoRequest req) (api.get="/fusion/contest/:contest_id/team/info/:team_id")
     // 提交队伍申请
-    TeamApplicationSubmitResponse TeamApplicationSubmit(1: TeamApplicationSubmitRequest req) (api.post="/fusion/team/application/submit/")
+    TeamApplicationSubmitResponse TeamApplicationSubmit(1: TeamApplicationSubmitRequest req) (api.post="/fusion/team/application/submit")
     // 获取队伍申请列表
-    TeamManageListResponse TeamManageList(1: TeamManageListRequest req) (api.get="/fusion/team/manage/list/")
+    TeamManageListResponse TeamManageList(1: TeamManageListRequest req) (api.get="/fusion/team/manage/list")
     // 队伍申请操作
-    TeamManageActionResponse TeamManageAction(1: TeamManageActionRequest req) (api.post="/fusion/team/manage/action/")
+    TeamManageActionResponse TeamManageAction(1: TeamManageActionRequest req) (api.post="/fusion/team/manage/action")
 
     /* favorite */
     // 赛事收藏操作
-    ContestFavoriteActionResponse ContestFavoriteAction(1: ContestFavoriteActionRequest req) (api.post="/fusion/favorite/contest/action/")
+    ContestFavoriteActionResponse ContestFavoriteAction(1: ContestFavoriteActionRequest req) (api.post="/fusion/favorite/contest/action")
     // 获取赛事收藏列表
-    ContestFavoriteListResponse ContestFavoriteList(1: ContestFavoriteListRequest req) (api.get="/fusion/favorite/contest/list/")
+    ContestFavoriteListResponse ContestFavoriteList(1: ContestFavoriteListRequest req) (api.get="/fusion/favorite/contest/list")
 }

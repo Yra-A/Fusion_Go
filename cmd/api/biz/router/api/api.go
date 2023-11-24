@@ -21,6 +21,8 @@ func Register(r *server.Hertz) {
 		_fusion := root.Group("/fusion", _fusionMw()...)
 		{
 			_contest := _fusion.Group("/contest", _contestMw()...)
+			_contest.POST("/create", append(_contestcreateMw(), api.ContestCreate)...)
+			_contest.GET("/list", append(_contestlistMw(), api.ContestList)...)
 			{
 				_contest_id := _contest.Group("/:contest_id", _contest_idMw()...)
 				{
@@ -33,89 +35,49 @@ func Register(r *server.Hertz) {
 				}
 			}
 			{
-				_create := _contest.Group("/create", _createMw()...)
-				_create.POST("/", append(_contestcreateMw(), api.ContestCreate)...)
-			}
-			{
 				_info0 := _contest.Group("/info", _info0Mw()...)
 				_info0.GET("/:contest_id", append(_contestinfoMw(), api.ContestInfo)...)
-			}
-			{
-				_list := _contest.Group("/list", _listMw()...)
-				_list.GET("/", append(_contestlistMw(), api.ContestList)...)
 			}
 		}
 		{
 			_favorite := _fusion.Group("/favorite", _favoriteMw()...)
 			{
 				_contest0 := _favorite.Group("/contest", _contest0Mw()...)
-				{
-					_action := _contest0.Group("/action", _actionMw()...)
-					_action.POST("/", append(_contestfavoriteactionMw(), api.ContestFavoriteAction)...)
-				}
-				{
-					_list0 := _contest0.Group("/list", _list0Mw()...)
-					_list0.GET("/", append(_contestfavoritelistMw(), api.ContestFavoriteList)...)
-				}
+				_contest0.POST("/action", append(_contestfavoriteactionMw(), api.ContestFavoriteAction)...)
+				_contest0.GET("/list", append(_contestfavoritelistMw(), api.ContestFavoriteList)...)
 			}
 		}
 		{
 			_team0 := _fusion.Group("/team", _team0Mw()...)
+			_team0.POST("/create", append(_teamcreateMw(), api.TeamCreate)...)
 			{
 				_application := _team0.Group("/application", _applicationMw()...)
-				{
-					_submit := _application.Group("/submit", _submitMw()...)
-					_submit.POST("/", append(_teamapplicationsubmitMw(), api.TeamApplicationSubmit)...)
-				}
-			}
-			{
-				_create0 := _team0.Group("/create", _create0Mw()...)
-				_create0.POST("/", append(_teamcreateMw(), api.TeamCreate)...)
+				_application.POST("/submit", append(_teamapplicationsubmitMw(), api.TeamApplicationSubmit)...)
 			}
 			{
 				_manage := _team0.Group("/manage", _manageMw()...)
-				{
-					_action0 := _manage.Group("/action", _action0Mw()...)
-					_action0.POST("/", append(_teammanageactionMw(), api.TeamManageAction)...)
-				}
-				{
-					_list1 := _manage.Group("/list", _list1Mw()...)
-					_list1.GET("/", append(_teammanagelistMw(), api.TeamManageList)...)
-				}
+				_manage.POST("/action", append(_teammanageactionMw(), api.TeamManageAction)...)
+				_manage.GET("/list", append(_teammanagelistMw(), api.TeamManageList)...)
 			}
 		}
 		{
 			_user := _fusion.Group("/user", _userMw()...)
-			{
-				_info1 := _user.Group("/info", _info1Mw()...)
-				_info1.GET("/", append(_userinfoMw(), api.UserInfo)...)
-				{
-					_upload := _info1.Group("/upload", _uploadMw()...)
-					_upload.POST("/", append(_userinfouploadMw(), api.UserInfoUpload)...)
-				}
-			}
-			{
-				_login := _user.Group("/login", _loginMw()...)
-				_login.POST("/", append(_userloginMw(), api.UserLogin)...)
-			}
+			_user.POST("/login", append(_userloginMw(), api.UserLogin)...)
+			_user.POST("/register", append(_userregisterMw(), api.UserRegister)...)
+			_user.GET("/info", append(_userinfoMw(), api.UserInfo)...)
+			_info1 := _user.Group("/info", _info1Mw()...)
+			_info1.POST("/upload", append(_userinfouploadMw(), api.UserInfoUpload)...)
 			{
 				_profile := _user.Group("/profile", _profileMw()...)
 				_profile.GET("/:user_id", append(_userprofileinfoMw(), api.UserProfileInfo)...)
-				{
-					_upload0 := _profile.Group("/upload", _upload0Mw()...)
-					_upload0.POST("/", append(_userprofileuploadMw(), api.UserProfileUpload)...)
-				}
-			}
-			{
-				_register := _user.Group("/register", _registerMw()...)
-				_register.POST("/", append(_userregisterMw(), api.UserRegister)...)
+				_profile.POST("/upload", append(_userprofileuploadMw(), api.UserProfileUpload)...)
 			}
 		}
 		{
 			_utils := _fusion.Group("/utils", _utilsMw()...)
 			{
-				_upload1 := _utils.Group("/upload", _upload1Mw()...)
-				_upload1.POST("/img", append(_imageuploadMw(), api.ImageUpload)...)
+				_upload := _utils.Group("/upload", _uploadMw()...)
+				_upload.POST("/img", append(_imageuploadMw(), api.ImageUpload)...)
 			}
 		}
 	}

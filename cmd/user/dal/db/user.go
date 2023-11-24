@@ -73,6 +73,10 @@ func CreateUser(username, password string) error {
 	if err := DB.Create(u).Error; err != nil {
 		return err
 	}
+	profile := &UserProfileInfo{UserID: u.UserID}
+	if err := DB.Create(profile).Error; err != nil {
+		return err
+	}
 	return nil
 }
 
