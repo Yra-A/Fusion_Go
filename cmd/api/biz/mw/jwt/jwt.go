@@ -59,7 +59,7 @@ func InitJwt() {
 			if floatId, ok := data.(float64); ok {
 				userId = int32(floatId)
 			}
-			if path == "/fusion/user/info/" {
+			if path == "/fusion/user/info" {
 				var req api.UserInfoRequest
 				if err = c.BindAndValidate(&req); err != nil {
 					return false
@@ -67,7 +67,7 @@ func InitJwt() {
 				if userId != req.UserID {
 					return false
 				}
-			} else if path == "/fusion/user/info/upload/" {
+			} else if path == "/fusion/user/info/upload" {
 				var req api.UserInfoUploadRequest
 				if err = c.BindAndValidate(&req); err != nil {
 					return false
@@ -83,7 +83,7 @@ func InitJwt() {
 				if userId != req.UserID {
 					return false
 				}
-			} else if path == "/fusion/user/profile/upload/" {
+			} else if path == "/fusion/user/profile/upload" {
 				var req api.UserProfileUploadRequest
 				if err = c.BindAndValidate(&req); err != nil {
 					return false
@@ -91,7 +91,7 @@ func InitJwt() {
 				if userId != req.UserID || userId != req.UserProfileInfo.UserInfo.UserID {
 					return false
 				}
-			} else if path == "/fusion/team/create/" {
+			} else if path == "/fusion/team/create" {
 				var req api.TeamCreateRequest
 				if err = c.BindAndValidate(&req); err != nil {
 					return false
@@ -99,7 +99,7 @@ func InitJwt() {
 				if userId != req.UserID {
 					return false
 				}
-			} else if path == "/fusion/team/application/submit/" {
+			} else if path == "/fusion/team/application/submit" {
 				var req api.TeamApplicationSubmitRequest
 				if err = c.BindAndValidate(&req); err != nil {
 					return false
@@ -107,7 +107,7 @@ func InitJwt() {
 				if userId != req.MemberInfo.UserID {
 					return false
 				}
-			} else if path == "/fusion/team/manage/list/" {
+			} else if path == "/fusion/team/manage/list" {
 				var req api.TeamManageListRequest
 				if err = c.BindAndValidate(&req); err != nil {
 					return false
@@ -115,7 +115,7 @@ func InitJwt() {
 				if req.UserID != userId {
 					return false
 				}
-			} else if path == "/fusion/team/manage/action/" {
+			} else if path == "/fusion/team/manage/action" {
 				var req api.TeamManageActionRequest
 				if err = c.BindAndValidate(&req); err != nil {
 					return false
@@ -123,7 +123,7 @@ func InitJwt() {
 				if req.UserID != userId {
 					return false
 				}
-			} else if path == "/fusion/favorite/contest/action/" {
+			} else if path == "/fusion/favorite/contest/action" {
 				var req api.ContestFavoriteActionRequest
 				if err = c.BindAndValidate(&req); err != nil {
 					return false
@@ -131,7 +131,7 @@ func InitJwt() {
 				if req.UserID != userId {
 					return false
 				}
-			} else if path == "/fusion/favorite/contest/list/" {
+			} else if path == "/fusion/favorite/contest/list" {
 				var req api.ContestFavoriteListRequest
 				if err = c.BindAndValidate(&req); err != nil {
 					return false
