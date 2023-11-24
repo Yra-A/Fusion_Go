@@ -3,253 +3,253 @@
 package api
 
 import (
-	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/hertz-contrib/gzip"
+    "github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
+    "github.com/cloudwego/hertz/pkg/app"
+    "github.com/hertz-contrib/gzip"
 )
 
 func rootMw() []app.HandlerFunc {
-	return []app.HandlerFunc{gzip.Gzip(gzip.DefaultCompression)}
+    return []app.HandlerFunc{gzip.Gzip(gzip.DefaultCompression)}
 }
 
 func _fusionMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _contestMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _infoMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _contestinfoMw() []app.HandlerFunc {
-	return nil
+    return nil
 }
 
 func _listMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _contestlistMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _userMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _info0Mw() []app.HandlerFunc {
-	return nil
+    return nil
 }
 
 func _userinfoMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _uploadMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _userinfouploadMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _loginMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _userloginMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _profileMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _userprofileinfoMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _upload0Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _userprofileuploadMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _registerMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _userregisterMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _utilsMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _upload1Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _imageuploadMw() []app.HandlerFunc {
-	// your code...
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    // your code...
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _contest_idMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _teamMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _teamlistMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _teaminfoMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _team0Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _applicationMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _submitMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _teamapplicationsubmitMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _createMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _teamcreateMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _manageMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _actionMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _teammanageactionMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _list0Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _teammanagelistMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _info1Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _contestcreateMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _create0Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _favoriteMw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _contest0Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _contestfavoriteactionMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _contestfavoritelistMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
+    return []app.HandlerFunc{
+        jwt.JwtMiddleware.MiddlewareFunc(),
+    }
 }
 
 func _action0Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
 
 func _list1Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+    // your code...
+    return nil
 }
