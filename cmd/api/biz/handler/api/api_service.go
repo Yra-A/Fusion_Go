@@ -15,6 +15,7 @@ import (
     "github.com/Yra-A/Fusion_Go/kitex_gen/team"
     "github.com/Yra-A/Fusion_Go/kitex_gen/user"
     conf "github.com/Yra-A/Fusion_Go/pkg/configs/oss"
+    "github.com/Yra-A/Fusion_Go/pkg/constants"
     "github.com/Yra-A/Fusion_Go/pkg/errno"
     "github.com/Yra-A/Fusion_Go/pkg/utils"
     "github.com/cloudwego/hertz/pkg/app"
@@ -93,6 +94,12 @@ func UserInfoUpload(ctx context.Context, c *app.RequestContext) {
         handler.BadResponse(c, err)
         return
     }
+    user_id, exists := c.Get(constants.IdentityKey)
+    if !exists {
+        handler.BadResponse(c, err)
+        return
+    }
+    req.UserInfo.UserID = int32(user_id.(float64))
     kresp, err := rpc.UserInfoUpload(context.Background(), &user.UserInfoUploadRequest{
         UserInfo: &user.UserInfo{
             UserId:         req.UserInfo.UserID,
