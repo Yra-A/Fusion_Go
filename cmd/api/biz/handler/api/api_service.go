@@ -144,8 +144,8 @@ func UserProfileInfo(ctx context.Context, c *app.RequestContext) {
 
 	u := kresp.UserProfileInfo
 	resp := new(api.UserProfileInfoResponse)
-	resp.StatusCode = errno.Success.ErrCode
-	resp.StatusMsg = errno.Success.ErrMsg
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
 	resp.UserProfileInfo = &api.UserProfileInfo{
 		Introduction: u.Introduction,
 		QqNumber:     u.QqNumber,
