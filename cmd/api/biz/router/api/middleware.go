@@ -5,11 +5,11 @@ package api
 import (
 	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/hertz-contrib/gzip"
 )
 
 func rootMw() []app.HandlerFunc {
-	return []app.HandlerFunc{gzip.Gzip(gzip.DefaultCompression)}
+	//return []app.HandlerFunc{gzip.Gzip(gzip.DefaultCompression)}
+	return nil
 }
 
 func _fusionMw() []app.HandlerFunc {
