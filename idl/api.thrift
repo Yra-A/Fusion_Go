@@ -194,7 +194,7 @@ struct ImageUploadRequest {
 struct ImageUploadResponse {
     1: i32 status_code,
     2: string status_msg,
-    3: string Image_url,
+    3: string image_url,
 }
 
 /* =========================== team =========================== */
