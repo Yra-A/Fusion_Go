@@ -5,7 +5,6 @@ import (
 	"github.com/Yra-A/Fusion_Go/kitex_gen/favorite"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/favorite/favoriteservice"
 	"github.com/Yra-A/Fusion_Go/pkg/constants"
-	"github.com/Yra-A/Fusion_Go/pkg/errno"
 	"github.com/Yra-A/Fusion_Go/pkg/middleware"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
@@ -42,9 +41,6 @@ func ContestFavoriteAction(ctx context.Context, req *favorite.ContestFavoriteAct
 	if err != nil {
 		return resp, err
 	}
-	if resp.StatusCode != 0 {
-		return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
-	}
 	return resp, nil
 }
 
@@ -53,9 +49,6 @@ func ContestFavoriteList(ctx context.Context, req *favorite.ContestFavoriteListR
 	resp, err := favoriteClient.ContestFavoriteList(ctx, req)
 	if err != nil {
 		return resp, err
-	}
-	if resp.StatusCode != 0 {
-		return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
 	}
 	return resp, nil
 }

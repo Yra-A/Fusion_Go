@@ -5,7 +5,6 @@ import (
 	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/contest/contestservice"
 	"github.com/Yra-A/Fusion_Go/pkg/constants"
-	"github.com/Yra-A/Fusion_Go/pkg/errno"
 	"github.com/Yra-A/Fusion_Go/pkg/middleware"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
@@ -42,9 +41,6 @@ func ContestCreate(ctx context.Context, req *contest.ContestCreateRequest) (*con
 	if err != nil {
 		return resp, err
 	}
-	if resp.StatusCode != 0 {
-		return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
-	}
 	return resp, nil
 }
 
@@ -54,9 +50,6 @@ func ContestList(ctx context.Context, req *contest.ContestListRequest) (*contest
 	if err != nil {
 		return resp, err
 	}
-	if resp.StatusCode != 0 {
-		return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
-	}
 	return resp, nil
 }
 
@@ -65,9 +58,6 @@ func ContestInfo(ctx context.Context, req *contest.ContestInfoRequest) (*contest
 	resp, err := contestClient.ContestInfo(ctx, req)
 	if err != nil {
 		return resp, err
-	}
-	if resp.StatusCode != 0 {
-		return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
 	}
 	return resp, nil
 }
