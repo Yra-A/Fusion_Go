@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Yra-A/Fusion_Go/cmd/contest/dal/db"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -16,6 +17,29 @@ func NewCreateContestService(ctx context.Context) *CreateContestService {
 }
 
 func (s *CreateContestService) CreateContest(c *contest.Contest) error {
+	return s.executeContestCreationTransaction(c)
+}
+
+func (s *CreateContestService) executeContestCreationTransaction(c *contest.Contest) error {
+	return db.DB.Transaction(func(tx *gorm.DB) error {
+		if err := s.createOrUpdateContest(tx, c); err != nil {
+			return err
+		}
+
+		contactIDs, err := s.createOrUpdateContacts(tx, c.ContestCoreInfo.Contact)
+		if err != nil {
+			return err
+		}
+
+		if err := s.addContestContacts(tx, c.ContestId, contactIDs); err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+func (s *CreateContestService) createOrUpdateContest(tx *gorm.DB, c *contest.Contest) error {
 	dbc := &db.Contest{
 		ContestID:               c.ContestId,
 		Title:                   c.Title,
@@ -32,28 +56,31 @@ func (s *CreateContestService) CreateContest(c *contest.Contest) error {
 		AdditionalInfo:          c.ContestCoreInfo.AdditionalInfo,
 		CreatedTime:             time.Unix(c.CreatedTime, 0),
 	}
+	return db.CreateOrUpdateContestWithTx(tx, dbc)
+}
 
-	if err := db.CreateOrUpdateContest(dbc); err != nil {
-		return err
-	}
-	con := c.ContestCoreInfo.Contact
-	dbcon := make([]*db.Contact, 0, len(con))
-	for _, v := range con {
-		dbcon = append(dbcon, &db.Contact{
+func (s *CreateContestService) createOrUpdateContacts(tx *gorm.DB, contacts []*contest.Contact) ([]int32, error) {
+	dbcons := make([]*db.Contact, len(contacts))
+	for i, v := range contacts {
+		dbcons[i] = &db.Contact{
 			Name:  v.Name,
 			Phone: v.Phone,
 			Email: v.Email,
-		})
+		}
 	}
-	if err := db.CreateOrUpdateContact(dbcon); err != nil {
-		return err
+
+	if err := db.CreateOrUpdateContactWithTx(tx, dbcons); err != nil {
+		return nil, err
 	}
-	conid := make([]int32, 0, len(con))
-	for _, v := range dbcon {
-		conid = append(conid, v.ContactID)
+
+	contactIDs := make([]int32, len(dbcons))
+	for i, v := range dbcons {
+		contactIDs[i] = v.ContactID
 	}
-	if err := db.ContestAddContacts(dbc.ContestID, conid); err != nil {
-		return err
-	}
-	return nil
+
+	return contactIDs, nil
+}
+
+func (s *CreateContestService) addContestContacts(tx *gorm.DB, contestID int32, contactIDs []int32) error {
+	return db.ContestAddContactsWithTx(tx, contestID, contactIDs)
 }

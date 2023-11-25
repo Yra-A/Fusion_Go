@@ -45,7 +45,7 @@ func (s *QueryUserProfileService) QueryUserProfile(user_id int32) (*user.UserPro
 }
 
 func (s *QueryUserProfileService) FetchUserProfileInfo(user_id int32, u *user.UserProfileInfo) error {
-	dbUserProfileInfo, err := db.QueryUserProfileByUserId(user_id)
+	dbUserProfileInfo, err := db.QueryUserProfileByUserId(db.DB, user_id)
 	if err != nil {
 		return err
 	}

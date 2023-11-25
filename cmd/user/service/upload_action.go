@@ -52,7 +52,7 @@ func (s *UploadUserService) UploadUserProfileInfo(u *user.UserProfileInfo) error
 }
 
 func (s *UploadUserService) UpdateHasProfile(userId int32) error {
-	profile, err := db.QueryUserProfileByUserId(userId)
+	profile, err := db.QueryUserProfileByUserId(db.DB, userId)
 	if err != nil {
 		return err
 	}
