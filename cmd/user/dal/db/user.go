@@ -66,18 +66,20 @@ func QueryUserByName(username string) (*Authentication, error) {
 }
 
 func CreateUser(username, password string) error {
-	u := &Authentication{
-		Username: username,
-		Password: password,
-	}
-	if err := DB.Create(u).Error; err != nil {
-		return err
-	}
-	profile := &UserProfileInfo{UserID: u.UserID}
-	if err := DB.Create(profile).Error; err != nil {
-		return err
-	}
-	return nil
+	return DB.Transaction(func(tx *gorm.DB) error {
+		u := &Authentication{
+			Username: username,
+			Password: password,
+		}
+		if err := tx.Create(u).Error; err != nil {
+			return err
+		}
+		profile := &UserProfileInfo{UserID: u.UserID}
+		if err := tx.Create(profile).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 // QueryUserByUserId query user by user_id
@@ -102,7 +104,7 @@ func QueryUserByUserId(userId int32) (*UserInfo, error) {
 }
 
 // QueryUserProfileByUserId query user profile by user_id
-func QueryUserProfileByUserId(userId int32) (*UserProfileInfo, error) {
+func QueryUserProfileByUserId(tx *gorm.DB, userId int32) (*UserProfileInfo, error) {
 	u := &UserProfileInfo{}
 	if err := DB.Where("user_id = ?", userId).First(u).Error; err != nil {
 		return nil, err
@@ -112,14 +114,16 @@ func QueryUserProfileByUserId(userId int32) (*UserProfileInfo, error) {
 
 // AddUserProfileInfo add user profile info
 func AddOrUpdateUserProfileInfo(u *UserProfileInfo) error {
-	existingProfile, err := QueryUserProfileByUserId(u.UserID)
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-	if existingProfile != nil {
-		return DB.Model(existingProfile).Updates(u).Error
-	}
-	return DB.Create(u).Error
+	return DB.Transaction(func(tx *gorm.DB) error {
+		existingProfile, err := QueryUserProfileByUserId(tx, u.UserID)
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		if existingProfile != nil {
+			return tx.Model(existingProfile).Updates(u).Error
+		}
+		return tx.Create(u).Error
+	})
 }
 
 // QueryHonorsByUserId 获取某个用户的所有荣誉
@@ -137,20 +141,22 @@ func QueryHonorsByUserId(userId int32) ([]string, error) {
 
 // AddOrUpdateHonors 更新用户的整个荣誉列表
 func AddOrUpdateHonors(userId int32, honors []string) error {
-	// 删除该用户的所有现有荣誉
-	if err := DB.Where("user_id = ?", userId).Delete(&Honors{}).Error; err != nil {
-		return err
-	}
-	for _, honor := range honors {
-		newHonor := Honors{
-			UserID: userId,
-			Honor:  honor,
-		}
-		if err := DB.Create(&newHonor).Error; err != nil {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		// 删除该用户的所有现有荣誉
+		if err := tx.Where("user_id = ?", userId).Delete(&Honors{}).Error; err != nil {
 			return err
 		}
-	}
-	return nil
+		for _, honor := range honors {
+			newHonor := Honors{
+				UserID: userId,
+				Honor:  honor,
+			}
+			if err := tx.Create(&newHonor).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 // UpdateHasProfile 更新用户是否填写了个人档案的状态

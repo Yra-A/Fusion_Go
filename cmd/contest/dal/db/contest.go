@@ -60,46 +60,46 @@ type ContestBrief struct {
 	Format      string
 }
 
-func CreateOrUpdateContest(c *Contest) error {
+func CreateOrUpdateContestWithTx(tx *gorm.DB, c *Contest) error {
 	var existingContest Contest
-	err := DB.Where("contest_id = ?", c.ContestID).First(&existingContest).Error
+	err := tx.Where("contest_id = ?", c.ContestID).First(&existingContest).Error
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return DB.Create(c).Error
+		return tx.Create(c).Error
 	}
 
-	return DB.Model(&existingContest).Updates(c).Error
+	return tx.Model(&existingContest).Updates(c).Error
 }
 
-func CreateOrUpdateContact(c []*Contact) error {
-	for _, v := range c {
+func CreateOrUpdateContactWithTx(tx *gorm.DB, contacts []*Contact) error {
+	for _, v := range contacts {
 		var existingContact Contact
-		err := DB.Where("name = ? AND phone = ? AND email = ?", v.Name, v.Phone, v.Email).First(&existingContact).Error
+		err := tx.Where("name = ? AND phone = ? AND email = ?", v.Name, v.Phone, v.Email).First(&existingContact).Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
 		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			if err = DB.Create(v).Error; err != nil {
+			if err = tx.Create(v).Error; err != nil {
 				return err
 			}
 			continue
 		}
 		v.ContactID = existingContact.ContactID
-		if err = DB.Model(&existingContact).Updates(v).Error; err != nil {
+		if err = tx.Model(&existingContact).Updates(v).Error; err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func ContestAddContacts(contestID int32, contactIDs []int32) error {
+func ContestAddContactsWithTx(tx *gorm.DB, contestID int32, contactIDs []int32) error {
 	for _, contactID := range contactIDs {
 		var relation ContestContactRelationship
-		err := DB.Where("contest_id = ? AND contact_id = ?", contestID, contactID).First(&relation).Error
+		err := tx.Where("contest_id = ? AND contact_id = ?", contestID, contactID).First(&relation).Error
 
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
@@ -110,12 +110,12 @@ func ContestAddContacts(contestID int32, contactIDs []int32) error {
 				ContestID: contestID,
 				ContactID: contactID,
 			}
-			if err = DB.Create(&newRelation).Error; err != nil {
+			if err = tx.Create(&newRelation).Error; err != nil {
 				return err
 			}
 			continue
 		}
-		if err = DB.Model(&relation).Updates(&ContestContactRelationship{
+		if err = tx.Model(&relation).Updates(&ContestContactRelationship{
 			ContestID: contestID,
 			ContactID: contactID,
 		}).Error; err != nil {
