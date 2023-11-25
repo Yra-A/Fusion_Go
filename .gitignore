@@ -3,7 +3,7 @@ test/
 .idea
 .gitignore
 Fusion_Go_build/
-
+cmd/**/output/
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,goland,visualstudiocode,windows,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,goland,visualstudiocode,windows,linux
