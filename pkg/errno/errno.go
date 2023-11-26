@@ -16,6 +16,7 @@ const (
 	UserinfoNotSetCode             = 10006
 	UserAlreadyExistErrCode        = 10007
 	EmptyUsernameOrPasswordErrCode = 10008
+	ContestNotExistErrCode         = 10009
 )
 
 type ErrNo struct {
@@ -47,6 +48,7 @@ var (
 	UserinfoNotSetErr          = NewErrNo(UserinfoNotSetCode, "用户信息未设置")
 	UserAlreadyExistErr        = NewErrNo(UserAlreadyExistErrCode, "用户已经存在")
 	EmptyUsernameOrPasswordErr = NewErrNo(EmptyUsernameOrPasswordErrCode, "用户名或密码为空")
+	ContestNotExistErr         = NewErrNo(ContestNotExistErrCode, "赛事不存在")
 )
 
 // ConvertErr convert error to Errno

@@ -6385,6 +6385,7 @@ func (p *ContestCreateRequest) String() string {
 type ContestCreateResponse struct {
 	StatusCode int32  `thrift:"status_code,1" form:"status_code" json:"status_code" query:"status_code"`
 	StatusMsg  string `thrift:"status_msg,2" form:"status_msg" json:"status_msg" query:"status_msg"`
+	ContestID  int32  `thrift:"contest_id,3" form:"contest_id" json:"contest_id" query:"contest_id"`
 }
 
 func NewContestCreateResponse() *ContestCreateResponse {
@@ -6399,9 +6400,14 @@ func (p *ContestCreateResponse) GetStatusMsg() (v string) {
 	return p.StatusMsg
 }
 
+func (p *ContestCreateResponse) GetContestID() (v int32) {
+	return p.ContestID
+}
+
 var fieldIDToName_ContestCreateResponse = map[int16]string{
 	1: "status_code",
 	2: "status_msg",
+	3: "contest_id",
 }
 
 func (p *ContestCreateResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -6436,6 +6442,16 @@ func (p *ContestCreateResponse) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -6491,6 +6507,15 @@ func (p *ContestCreateResponse) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *ContestCreateResponse) ReadField3(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.ContestID = v
+	}
+	return nil
+}
+
 func (p *ContestCreateResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("ContestCreateResponse"); err != nil {
@@ -6503,6 +6528,10 @@ func (p *ContestCreateResponse) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 
@@ -6556,6 +6585,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *ContestCreateResponse) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("contest_id", thrift.I32, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.ContestID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *ContestCreateResponse) String() string {

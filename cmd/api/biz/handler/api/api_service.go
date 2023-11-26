@@ -229,6 +229,7 @@ func ContestCreate(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.ContestCreateResponse)
 	resp.StatusCode = kresp.StatusCode
 	resp.StatusMsg = kresp.StatusMsg
+	resp.ContestID = kresp.ContestId
 	handler.SendResponse(c, resp)
 }
 

@@ -3126,6 +3126,20 @@ func (p *ContestCreateResponse) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 3:
+			if fieldTypeId == thrift.I32 {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -3189,6 +3203,20 @@ func (p *ContestCreateResponse) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *ContestCreateResponse) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.ContestId = v
+
+	}
+	return offset, nil
+}
+
 // for compatibility
 func (p *ContestCreateResponse) FastWrite(buf []byte) int {
 	return 0
@@ -3199,6 +3227,7 @@ func (p *ContestCreateResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "ContestCreateResponse")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
@@ -3212,6 +3241,7 @@ func (p *ContestCreateResponse) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
+		l += p.field3Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -3236,6 +3266,15 @@ func (p *ContestCreateResponse) fastWriteField2(buf []byte, binaryWriter bthrift
 	return offset
 }
 
+func (p *ContestCreateResponse) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "contest_id", thrift.I32, 3)
+	offset += bthrift.Binary.WriteI32(buf[offset:], p.ContestId)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *ContestCreateResponse) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("status_code", thrift.I32, 1)
@@ -3249,6 +3288,15 @@ func (p *ContestCreateResponse) field2Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("status_msg", thrift.STRING, 2)
 	l += bthrift.Binary.StringLengthNocopy(p.StatusMsg)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *ContestCreateResponse) field3Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("contest_id", thrift.I32, 3)
+	l += bthrift.Binary.I32Length(p.ContestId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

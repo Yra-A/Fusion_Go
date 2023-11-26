@@ -15,12 +15,18 @@ type ContestServiceImpl struct{}
 func (s *ContestServiceImpl) ContestCreate(ctx context.Context, req *contest.ContestCreateRequest) (resp *contest.ContestCreateResponse, err error) {
 	klog.CtxDebugf(ctx, "ContestCreate called: %v", req.GetContest().ContestId)
 	resp = new(contest.ContestCreateResponse)
-	err = service.NewCreateContestService(ctx).CreateContest(req.Contest)
+	contest_id, err := service.NewCreateContestService(ctx).CreateContest(req.Contest)
+	if err == errno.ContestNotExistErr {
+		resp.StatusCode = errno.ContestNotExistErr.ErrCode
+		resp.StatusMsg = errno.ContestNotExistErr.ErrMsg
+		return resp, nil
+	}
 	if err != nil {
 		resp.StatusCode = errno.Fail.ErrCode
 		resp.StatusMsg = errno.Fail.ErrMsg
-		return
+		return resp, err
 	}
+	resp.ContestId = contest_id
 	resp.StatusCode = errno.Success.ErrCode
 	resp.StatusMsg = errno.Success.ErrMsg
 	return resp, nil
