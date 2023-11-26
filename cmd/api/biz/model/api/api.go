@@ -8881,6 +8881,7 @@ func (p *TeamCreateRequest) String() string {
 type TeamCreateResponse struct {
 	StatusCode int32  `thrift:"status_code,1" form:"status_code" json:"status_code" query:"status_code"`
 	StatusMsg  string `thrift:"status_msg,2" form:"status_msg" json:"status_msg" query:"status_msg"`
+	TeamID     int32  `thrift:"team_id,3" form:"team_id" json:"team_id" query:"team_id"`
 }
 
 func NewTeamCreateResponse() *TeamCreateResponse {
@@ -8895,9 +8896,14 @@ func (p *TeamCreateResponse) GetStatusMsg() (v string) {
 	return p.StatusMsg
 }
 
+func (p *TeamCreateResponse) GetTeamID() (v int32) {
+	return p.TeamID
+}
+
 var fieldIDToName_TeamCreateResponse = map[int16]string{
 	1: "status_code",
 	2: "status_msg",
+	3: "team_id",
 }
 
 func (p *TeamCreateResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -8932,6 +8938,16 @@ func (p *TeamCreateResponse) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -8987,6 +9003,15 @@ func (p *TeamCreateResponse) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *TeamCreateResponse) ReadField3(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		p.TeamID = v
+	}
+	return nil
+}
+
 func (p *TeamCreateResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("TeamCreateResponse"); err != nil {
@@ -8999,6 +9024,10 @@ func (p *TeamCreateResponse) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 
@@ -9052,6 +9081,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *TeamCreateResponse) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("team_id", thrift.I32, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.TeamID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *TeamCreateResponse) String() string {
