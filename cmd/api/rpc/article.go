@@ -5,7 +5,6 @@ import (
 	"github.com/Yra-A/Fusion_Go/kitex_gen/article"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/article/articleservice"
 	"github.com/Yra-A/Fusion_Go/pkg/constants"
-	"github.com/Yra-A/Fusion_Go/pkg/errno"
 	"github.com/Yra-A/Fusion_Go/pkg/middleware"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
@@ -41,9 +40,6 @@ func ArticleList(ctx context.Context, req *article.ArticleListRequest) (*article
 	resp, err := articleClient.ArticleList(ctx, req)
 	if err != nil {
 		return resp, err
-	}
-	if resp.StatusCode != 0 {
-		return resp, errno.NewErrNo(resp.StatusCode, resp.StatusMsg)
 	}
 	return resp, nil
 }
