@@ -1917,6 +1917,20 @@ func (p *TeamCreateResponse) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 3:
+			if fieldTypeId == thrift.I32 {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -1980,6 +1994,20 @@ func (p *TeamCreateResponse) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *TeamCreateResponse) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.TeamId = v
+
+	}
+	return offset, nil
+}
+
 // for compatibility
 func (p *TeamCreateResponse) FastWrite(buf []byte) int {
 	return 0
@@ -1990,6 +2018,7 @@ func (p *TeamCreateResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.Bi
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "TeamCreateResponse")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
@@ -2003,6 +2032,7 @@ func (p *TeamCreateResponse) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
+		l += p.field3Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -2027,6 +2057,15 @@ func (p *TeamCreateResponse) fastWriteField2(buf []byte, binaryWriter bthrift.Bi
 	return offset
 }
 
+func (p *TeamCreateResponse) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "team_id", thrift.I32, 3)
+	offset += bthrift.Binary.WriteI32(buf[offset:], p.TeamId)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *TeamCreateResponse) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("status_code", thrift.I32, 1)
@@ -2040,6 +2079,15 @@ func (p *TeamCreateResponse) field2Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("status_msg", thrift.STRING, 2)
 	l += bthrift.Binary.StringLengthNocopy(p.StatusMsg)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *TeamCreateResponse) field3Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("team_id", thrift.I32, 3)
+	l += bthrift.Binary.I32Length(p.TeamId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

@@ -357,6 +357,7 @@ func TeamCreate(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.TeamCreateResponse)
 	resp.StatusCode = kresp.StatusCode
 	resp.StatusMsg = kresp.StatusMsg
+	resp.TeamID = kresp.TeamId
 	handler.SendResponse(c, resp)
 }
 
