@@ -16,13 +16,12 @@ func NewCreateContestService(ctx context.Context) *CreateContestService {
 	return &CreateContestService{ctx: ctx}
 }
 
-func (s *CreateContestService) CreateContest(c *contest.Contest) error {
-	return s.executeContestCreationTransaction(c)
-}
-
-func (s *CreateContestService) executeContestCreationTransaction(c *contest.Contest) error {
-	return db.DB.Transaction(func(tx *gorm.DB) error {
-		if err := s.createOrUpdateContest(tx, c); err != nil {
+func (s *CreateContestService) CreateContest(c *contest.Contest) (int32, error) {
+	var contestId int32
+	err := db.DB.Transaction(func(tx *gorm.DB) error {
+		var err error
+		contestId, err = s.createOrUpdateContest(tx, c)
+		if err != nil {
 			return err
 		}
 
@@ -31,15 +30,16 @@ func (s *CreateContestService) executeContestCreationTransaction(c *contest.Cont
 			return err
 		}
 
-		if err := s.addContestContacts(tx, c.ContestId, contactIDs); err != nil {
+		if err = s.addContestContacts(tx, contestId, contactIDs); err != nil {
 			return err
 		}
 
 		return nil
 	})
+	return contestId, err
 }
 
-func (s *CreateContestService) createOrUpdateContest(tx *gorm.DB, c *contest.Contest) error {
+func (s *CreateContestService) createOrUpdateContest(tx *gorm.DB, c *contest.Contest) (int32, error) {
 	dbc := &db.Contest{
 		ContestID:               c.ContestId,
 		Title:                   c.Title,
