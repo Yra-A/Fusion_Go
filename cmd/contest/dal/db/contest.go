@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"github.com/Yra-A/Fusion_Go/pkg/errno"
 	"gorm.io/gorm"
 	"time"
 )
@@ -60,19 +61,26 @@ type ContestBrief struct {
 	Format      string
 }
 
-func CreateOrUpdateContestWithTx(tx *gorm.DB, c *Contest) error {
+func CreateOrUpdateContestWithTx(tx *gorm.DB, c *Contest) (int32, error) {
+	if c.ContestID == 0 {
+		if err := tx.Create(c).Error; err != nil {
+			return 0, err
+		}
+		return c.ContestID, nil
+	}
 	var existingContest Contest
 	err := tx.Where("contest_id = ?", c.ContestID).First(&existingContest).Error
 
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return tx.Create(c).Error
+		return 0, errno.ContestNotExistErr
 	}
-
-	return tx.Model(&existingContest).Updates(c).Error
+	if err != nil {
+		return 0, err
+	}
+	if err := tx.Model(&existingContest).Updates(c).Error; err != nil {
+		return 0, err
+	}
+	return c.ContestID, nil
 }
 
 func CreateOrUpdateContactWithTx(tx *gorm.DB, contacts []*Contact) error {
@@ -97,6 +105,18 @@ func CreateOrUpdateContactWithTx(tx *gorm.DB, contacts []*Contact) error {
 }
 
 func ContestAddContactsWithTx(tx *gorm.DB, contestID int32, contactIDs []int32) error {
+	// 如果没有提供联系人ID，则删除所有关系
+	if len(contactIDs) == 0 {
+		return tx.Where("contest_id = ?", contestID).Delete(&ContestContactRelationship{}).Error
+	}
+
+	// 删除不再关联的联系人关系
+	if err := tx.Where("contest_id = ? AND contact_id NOT IN ?", contestID, contactIDs).
+		Delete(&ContestContactRelationship{}).Error; err != nil {
+		return err
+	}
+
+	// 为每个联系人检查并创建关系
 	for _, contactID := range contactIDs {
 		var relation ContestContactRelationship
 		err := tx.Where("contest_id = ? AND contact_id = ?", contestID, contactID).First(&relation).Error
@@ -113,13 +133,6 @@ func ContestAddContactsWithTx(tx *gorm.DB, contestID int32, contactIDs []int32) 
 			if err = tx.Create(&newRelation).Error; err != nil {
 				return err
 			}
-			continue
-		}
-		if err = tx.Model(&relation).Updates(&ContestContactRelationship{
-			ContestID: contestID,
-			ContactID: contactID,
-		}).Error; err != nil {
-			return err
 		}
 	}
 	return nil

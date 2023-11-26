@@ -78,6 +78,7 @@ struct ContestCreateRequest {
 struct ContestCreateResponse {
     1: i32 status_code,
     2: string status_msg,
+    3: i32 contest_id,
 }
 
 
