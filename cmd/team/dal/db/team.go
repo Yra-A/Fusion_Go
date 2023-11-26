@@ -177,9 +177,7 @@ func GetTeamApplicationList(user_id int32, team_id int32) ([]*team.TeamApplicati
 }
 func TeamAddUser(team_id int32, member_id int32) error {
 	var record TeamUserRelationship
-	if err := DB.Where("team_id = ? AND user_id = ?", team_id, member_id).First(&record).Error; err != nil {
-
-	}
+	DB.Where("team_id = ? AND user_id = ?", team_id, member_id).First(&record)
 	if record.TeamUserID != 0 {
 		return nil
 	}
@@ -187,6 +185,15 @@ func TeamAddUser(team_id int32, member_id int32) error {
 		UserID: member_id,
 		TeamID: team_id,
 	}).Error; err != nil {
+		return err
+	}
+	// 更新 cur number
+	var count int64
+	if err := DB.Model(&TeamUserRelationship{}).Where("team_id = ?", team_id).Count(&count).Error; err != nil {
+		return err
+	}
+
+	if err := DB.Model(&TeamInfo{}).Where("team_id = ?", team_id).Update("cur_people_num", count).Error; err != nil {
 		return err
 	}
 	return nil
