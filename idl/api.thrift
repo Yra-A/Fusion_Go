@@ -342,6 +342,34 @@ struct ContestFavoriteListResponse {
     4: i32 total
 }
 
+/* =========================== article =========================== */
+
+struct ArticleBrief {
+    1: i32 article_id,
+    2: string title,
+    3: i32 author_id,
+    4: string author,
+    5: i64 created_time,
+    6: string link,
+}
+
+struct ArticleBriefInfo {
+    1: ArticleBrief article_brief_info,
+}
+
+struct ArticleListRequest {
+    1: i32 contest_id (api.query="contest_id")
+    2: i32 limit (api.query="limit")
+    3: i32 offset (api.query="offset")
+}
+
+struct ArticleListResponse {
+    1: i32 status_code,
+    2: string status_msg,
+    3: i32 total,
+    4: list<ArticleBriefInfo> article_list,
+}
+
 service ApiService {
     /* user */
     // 用户注册操作
@@ -390,4 +418,8 @@ service ApiService {
     ContestFavoriteActionResponse ContestFavoriteAction(1: ContestFavoriteActionRequest req) (api.post="/fusion/favorite/contest/action")
     // 获取赛事收藏列表
     ContestFavoriteListResponse ContestFavoriteList(1: ContestFavoriteListRequest req) (api.get="/fusion/favorite/contest/list")
+
+    /* article */
+    // 获取赛事资讯文章列表
+    ArticleListResponse ArticleList(1: ArticleListRequest req) (api.get="/fusion/article/list/")
 }

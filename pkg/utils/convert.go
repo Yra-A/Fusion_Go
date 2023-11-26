@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/Yra-A/Fusion_Go/cmd/api/biz/model/api"
+	"github.com/Yra-A/Fusion_Go/kitex_gen/article"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/favorite"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/team"
@@ -249,4 +250,22 @@ func ConvertContestBriefToFavoriteBrief(src *contest.ContestBrief) *favorite.Con
 		Field:       src.Field,
 		Format:      src.Format,
 	}
+}
+
+func ConvertArticleBriefInfoToAPI(articleList []*article.ArticleBriefInfo) []*api.ArticleBriefInfo {
+	apiArticleList := make([]*api.ArticleBriefInfo, len(articleList))
+	for i, articleInfo := range articleList {
+		apiArticle := &api.ArticleBriefInfo{
+			ArticleBriefInfo: &api.ArticleBrief{
+				ArticleID:   articleInfo.ArticleBriefInfo.ArticleId,
+				Title:       articleInfo.ArticleBriefInfo.Title,
+				AuthorID:    articleInfo.ArticleBriefInfo.AuthorId,
+				Author:      articleInfo.ArticleBriefInfo.Author,
+				CreatedTime: articleInfo.ArticleBriefInfo.CreatedTime,
+				Link:        articleInfo.ArticleBriefInfo.Link,
+			},
+		}
+		apiArticleList[i] = apiArticle
+	}
+	return apiArticleList
 }
