@@ -1,7 +1,6 @@
 package db
 
 import (
-	"github.com/Yra-A/Fusion_Go/kitex_gen/article"
 	"time"
 )
 
@@ -20,8 +19,8 @@ func (Article) TableName() string {
 }
 
 // FetchArticleList 根据contest_id, limit, offset来获取文章列表
-func FetchArticleList(contestId int32, limit int32, offset int32) ([]*article.ArticleBrief, error) {
-	var articleBriefInfos []*article.ArticleBrief
+func FetchArticleList(contestId int32, limit int32, offset int32) ([]*Article, error) {
+	var articleBriefInfos []*Article
 
 	//将*gorm.DB实例与Article模型关联，并能倒序
 	query := DB.Model(&Article{}).Order("created_time desc")

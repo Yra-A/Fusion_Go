@@ -18,12 +18,19 @@ func (s *QueryArticleListService) QueryArticleList(contestId int32, limit int32,
 		return nil, err
 	}
 
-	//将dbArticles(ArticleBrief类型)转换为articleBriefInfo(ArticleBriefInfo类型)
+	//将dbArticles(db.Article类型)转换为articleBriefInfo(ArticleBriefInfo类型)
 	articleBriefInfos := make([]*article.ArticleBriefInfo, len(dbArticles))
 
 	for i, v := range dbArticles {
 		briefInfo := &article.ArticleBriefInfo{
-			ArticleBriefInfo: v,
+			ArticleBriefInfo: &article.ArticleBrief{
+				ArticleId:   v.ArticleID,
+				Title:       v.Title,
+				AuthorId:    v.AuthorID,
+				Author:      v.Author,
+				CreatedTime: v.CreatedTime.Unix(),
+				Link:        v.Link,
+			},
 		}
 		articleBriefInfos[i] = briefInfo
 	}
