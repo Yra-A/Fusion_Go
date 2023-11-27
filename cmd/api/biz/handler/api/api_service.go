@@ -10,6 +10,7 @@ import (
 	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/jwt"
 	"github.com/Yra-A/Fusion_Go/cmd/api/biz/mw/oss"
 	"github.com/Yra-A/Fusion_Go/cmd/api/rpc"
+	"github.com/Yra-A/Fusion_Go/kitex_gen/article"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/contest"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/favorite"
 	"github.com/Yra-A/Fusion_Go/kitex_gen/team"
@@ -557,5 +558,37 @@ func ContestFavoriteList(ctx context.Context, c *app.RequestContext) {
 	resp.StatusMsg = kresp.StatusMsg
 	resp.ContestList = utils.ConvertBriefFavoriteInfoToAPI(kresp.ContestList)
 	resp.Total = kresp.Total
+	handler.SendResponse(c, resp)
+}
+
+// ArticleList .
+// @router /fusion/article/list/ [GET]
+func ArticleList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.ArticleListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+
+	//将api层的请求转换为rpc层的请求, 且此处kresp为rpc层的响应
+	kresp, err := rpc.ArticleList(context.Background(), &article.ArticleListRequest{
+		ContestId: req.ContestID,
+		Limit:     req.Limit,
+		Offset:    req.Offset,
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+
+	//将rpc层的响应转换为api层的响应
+	resp := new(api.ArticleListResponse)
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
+	resp.Total = kresp.Total
+	resp.ArticleList = utils.ConvertArticleBriefInfoToAPI(kresp.ArticleList)
+
 	handler.SendResponse(c, resp)
 }

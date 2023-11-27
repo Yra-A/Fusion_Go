@@ -8,6 +8,7 @@ const (
 	ContestServiceName  = "contest"
 	TeamServiceName     = "team"
 	FavoriteServiceName = "favorite"
+	ArticleServiceName  = "article"
 
 	//CPURateLimit float64 = 80.0
 	//

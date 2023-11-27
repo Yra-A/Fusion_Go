@@ -6,4 +6,5 @@ func InitRPC() {
 	initContestRpc()
 	initTeamRpc()
 	initFavoriteRpc()
+	initArticleRpc()
 }

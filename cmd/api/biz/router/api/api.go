@@ -20,6 +20,13 @@ func Register(r *server.Hertz) {
 	{
 		_fusion := root.Group("/fusion", _fusionMw()...)
 		{
+			_article := _fusion.Group("/article", _articleMw()...)
+			{
+				_list := _article.Group("/list", _listMw()...)
+				_list.GET("/", append(_articlelistMw(), api.ArticleList)...)
+			}
+		}
+		{
 			_contest := _fusion.Group("/contest", _contestMw()...)
 			_contest.POST("/create", append(_contestcreateMw(), api.ContestCreate)...)
 			_contest.GET("/list", append(_contestlistMw(), api.ContestList)...)

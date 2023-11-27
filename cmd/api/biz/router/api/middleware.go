@@ -253,3 +253,13 @@ func _list1Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _articleMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _articlelistMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
