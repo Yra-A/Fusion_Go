@@ -221,4 +221,5 @@ $RECYCLE.BIN/
 /cmd/contest/tmp/
 /cmd/favorite/tmp/
 /cmd/team/tmp/
+/cmd/article/tmp/
 /pkg/data/redis/
