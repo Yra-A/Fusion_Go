@@ -35,6 +35,15 @@ func initArticleRpc() {
 	articleClient = c //articleClient就是新rpc客户端
 }
 
+// ArticleCreate 创建文章【rpc 客户端】
+func ArticleCreate(ctx context.Context, req *article.ArticleCreateRequest) (*article.ArticleCreateResponse, error) {
+	resp, err := articleClient.ArticleCreate(ctx, req)
+	if err != nil {
+		return resp, err
+	}
+	return resp, nil
+}
+
 // ArticleList 文章列表【rpc 客户端】
 func ArticleList(ctx context.Context, req *article.ArticleListRequest) (*article.ArticleListResponse, error) {
 	resp, err := articleClient.ArticleList(ctx, req)

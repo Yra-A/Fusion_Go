@@ -1,6 +1,9 @@
 package db
 
 import (
+	"errors"
+	"github.com/Yra-A/Fusion_Go/pkg/errno"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -16,6 +19,50 @@ type Article struct {
 
 func (Article) TableName() string {
 	return "article"
+}
+
+// CreateArticle 创建文章
+func CreateArticle(title string, authorId int32, author string, link string, contestId int32) (int32, error) {
+	article := &Article{
+		Title:       title,
+		AuthorID:    authorId,
+		Author:      author,
+		Link:        link,
+		CreatedTime: time.Now(),
+		ContestID:   contestId,
+	}
+	err := DB.Create(article).Error
+	if err != nil {
+		return 0, err
+	}
+	return article.ArticleID, nil
+}
+
+func ModifyArticle(articleId int32, title string, authorId int32, author string, link string, contestId int32) (int32, error) {
+	article := &Article{}
+	err := DB.Model(&Article{}).Where("article_id = ?", articleId).First(&article).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return 0, errno.ArticleNotExistErr
+	}
+	if err != nil {
+		return 0, err
+	}
+
+	articles := &Article{
+		ArticleID: articleId,
+	}
+	err = DB.Model(&articles).Updates(map[string]interface{}{
+		"title":      title,
+		"author_id":  authorId,
+		"author":     author,
+		"link":       link,
+		"contest_id": contestId,
+	}).Error
+
+	if err != nil {
+		return 0, err
+	}
+	return article.ArticleID, nil
 }
 
 // FetchArticleList 根据contest_id, limit, offset来获取文章列表
