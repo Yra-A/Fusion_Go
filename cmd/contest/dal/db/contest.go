@@ -163,7 +163,7 @@ func QueryContactsByContactIds(contactIds []int32) ([]*Contact, error) {
 }
 
 // FetchContestList 根据关键字、领域、格式、限制和偏移量来获取赛事列表。
-func FetchContestList(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*ContestBrief, error) {
+func FetchContestList(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*ContestBrief, int32, error) {
 	var contestBriefInfos []*ContestBrief
 
 	query := DB.Model(&Contest{}).Order("created_time desc")
@@ -185,14 +185,20 @@ func FetchContestList(keyword string, fields []string, formats []string, limit i
 	// 选择指定的字段，确保字段名与 ContestBrief 结构体中的标签一致
 	query = query.Select("contest_id, title, description, created_time, field, format")
 
+	var total int64
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
 	// 应用分页
 	query = query.Offset(int(offset)).Limit(int(limit))
 
 	// 执行查询
 	if err := query.Find(&contestBriefInfos).Error; err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return contestBriefInfos, nil
+	return contestBriefInfos, int32(total), nil
 }
 
 func FetchContestListByContestIds(contestIds []int32) ([]*ContestBrief, error) {

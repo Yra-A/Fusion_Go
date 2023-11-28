@@ -36,7 +36,7 @@ func (s *ContestServiceImpl) ContestCreate(ctx context.Context, req *contest.Con
 func (s *ContestServiceImpl) ContestList(ctx context.Context, req *contest.ContestListRequest) (resp *contest.ContestListResponse, err error) {
 	klog.CtxDebugf(ctx, "ContestList called")
 	resp = new(contest.ContestListResponse)
-	c, err := service.NewQueryContestListService(ctx).QueryContestList(req.Keyword, req.Fields, req.Formats, req.Limit, req.Offset)
+	c, total, err := service.NewQueryContestListService(ctx).QueryContestList(req.Keyword, req.Fields, req.Formats, req.Limit, req.Offset)
 	if err != nil {
 		resp.StatusCode = errno.Fail.ErrCode
 		resp.StatusMsg = errno.Fail.ErrMsg
@@ -44,7 +44,7 @@ func (s *ContestServiceImpl) ContestList(ctx context.Context, req *contest.Conte
 	}
 	resp.StatusCode = errno.Success.ErrCode
 	resp.StatusMsg = errno.Success.ErrMsg
-	resp.Total = int32(len(c))
+	resp.Total = total
 	resp.ContestList = c
 	return resp, nil
 }

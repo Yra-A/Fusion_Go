@@ -15,7 +15,7 @@ type ArticleServiceImpl struct{}
 func (s *ArticleServiceImpl) ArticleList(ctx context.Context, req *article.ArticleListRequest) (resp *article.ArticleListResponse, err error) {
 	klog.CtxDebugf(ctx, "ArticleList called")
 	resp = new(article.ArticleListResponse)
-	c, err := service.NewQueryArticleListService(ctx).QueryArticleList(req.ContestId, req.Limit, req.Offset)
+	c, total, err := service.NewQueryArticleListService(ctx).QueryArticleList(req.ContestId, req.Limit, req.Offset)
 
 	//返回查询过程中可能的错误信息
 	if err != nil {
@@ -27,7 +27,7 @@ func (s *ArticleServiceImpl) ArticleList(ctx context.Context, req *article.Artic
 	//返回查询成功的信息
 	resp.StatusCode = errno.Success.ErrCode
 	resp.StatusMsg = errno.Success.ErrMsg
-	resp.Total = int32(len(c))
+	resp.Total = total
 	resp.ArticleList = c
 	return resp, nil
 }

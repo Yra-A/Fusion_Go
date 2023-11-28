@@ -66,7 +66,7 @@ func ModifyArticle(articleId int32, title string, authorId int32, author string,
 }
 
 // FetchArticleList 根据contest_id, limit, offset来获取文章列表
-func FetchArticleList(contestId int32, limit int32, offset int32) ([]*Article, error) {
+func FetchArticleList(contestId int32, limit int32, offset int32) ([]*Article, int32, error) {
 	var articleBriefInfos []*Article
 
 	//将*gorm.DB实例与Article模型关联，并能倒序
@@ -78,14 +78,20 @@ func FetchArticleList(contestId int32, limit int32, offset int32) ([]*Article, e
 	//执行select语句，确保字段名和ArticleBrief结构中一致
 	query = query.Select("article_id, title, author_id, author, created_time, link")
 
+	var total int64
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
 	//应用分页
 	query = query.Offset(int(offset)).Limit(int(limit))
 
 	//执行查询
 	err := query.Find(&articleBriefInfos).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return articleBriefInfos, nil
+	return articleBriefInfos, int32(total), nil
 }

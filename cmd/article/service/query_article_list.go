@@ -12,10 +12,10 @@ type QueryArticleListService struct {
 }
 
 // QueryArticleList “查询比赛列表”方法
-func (s *QueryArticleListService) QueryArticleList(contestId int32, limit int32, offset int32) ([]*article.ArticleBriefInfo, error) {
-	dbArticles, err := db.FetchArticleList(contestId, limit, offset)
+func (s *QueryArticleListService) QueryArticleList(contestId int32, limit int32, offset int32) ([]*article.ArticleBriefInfo, int32, error) {
+	dbArticles, total, err := db.FetchArticleList(contestId, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	//将dbArticles(db.Article类型)转换为articleBriefInfo(ArticleBriefInfo类型)
@@ -35,7 +35,7 @@ func (s *QueryArticleListService) QueryArticleList(contestId int32, limit int32,
 		articleBriefInfos[i] = briefInfo
 	}
 
-	return articleBriefInfos, nil
+	return articleBriefInfos, total, nil
 }
 
 // NewQueryArticleListService 构造函数，用于创建实例，传入上下文

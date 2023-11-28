@@ -31,7 +31,7 @@ func (s *TeamServiceImpl) TeamCreate(ctx context.Context, req *team.TeamCreateRe
 func (s *TeamServiceImpl) TeamList(ctx context.Context, req *team.TeamListRequest) (resp *team.TeamListResponse, err error) {
 	klog.CtxDebugf(ctx, "TeamList called")
 	resp = new(team.TeamListResponse)
-	teamList, err := service.NewTeamListService(ctx).TeamList(req.ContestId, req.Limit, req.Offset)
+	teamList, total, err := service.NewTeamListService(ctx).TeamList(req.ContestId, req.Limit, req.Offset)
 	if err != nil {
 		resp.StatusCode = errno.Fail.ErrCode
 		resp.StatusMsg = errno.Fail.ErrMsg
@@ -40,6 +40,7 @@ func (s *TeamServiceImpl) TeamList(ctx context.Context, req *team.TeamListReques
 	resp.StatusCode = errno.Success.ErrCode
 	resp.StatusMsg = errno.Success.ErrMsg
 	resp.TeamList = teamList
+	resp.Total = total
 	return resp, nil
 }
 
