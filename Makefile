@@ -42,9 +42,11 @@ build:
 	mkdir -p Fusion_Go_build/favorite_output
 	mkdir -p Fusion_Go_build/contest_output
 	mkdir -p Fusion_Go_build/team_output
+	mkdir -p Fusion_Go_build/article_output
 	cd cmd/api && sh ./build_linux.sh && cp -r output/* ../../Fusion_Go_build/api_output
 	cd cmd/user && sh ./build_linux.sh && cp -r output/* ../../Fusion_Go_build/user_output
 	cd cmd/favorite && sh ./build_linux.sh && cp -r output/* ../../Fusion_Go_build/favorite_output
 	cd cmd/contest && sh ./build_linux.sh && cp -r output/* ../../Fusion_Go_build/contest_output
 	cd cmd/team && sh ./build_linux.sh && cp -r output/* ../../Fusion_Go_build/team_output
+	cd cmd/article && sh ./build_linux.sh && cp -r output/* ../../Fusion_Go_build/article_output
 	cp Makefile_Fusion Fusion_Go_build/Makefile

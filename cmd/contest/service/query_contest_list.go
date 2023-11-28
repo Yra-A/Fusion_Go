@@ -13,10 +13,10 @@ type QueryContestListService struct {
 func NewQueryContestListService(ctx context.Context) *QueryContestListService {
 	return &QueryContestListService{ctx: ctx}
 }
-func (s *QueryContestListService) QueryContestList(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*contest.ContestBriefInfo, error) {
-	dbContests, err := db.FetchContestList(keyword, fields, formats, limit, offset)
+func (s *QueryContestListService) QueryContestList(keyword string, fields []string, formats []string, limit int32, offset int32) ([]*contest.ContestBriefInfo, int32, error) {
+	dbContests, total, err := db.FetchContestList(keyword, fields, formats, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	contestBriefInfos := make([]*contest.ContestBriefInfo, len(dbContests))
 	for i, v := range dbContests {
@@ -31,5 +31,5 @@ func (s *QueryContestListService) QueryContestList(keyword string, fields []stri
 			},
 		}
 	}
-	return contestBriefInfos, nil
+	return contestBriefInfos, total, nil
 }

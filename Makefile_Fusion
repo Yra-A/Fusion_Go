@@ -12,3 +12,6 @@ run_team:
 
 run_user:
 	sh ./user_output/bootstrap.sh
+
+run_article:
+	sh ./article_output/bootstrap.sh
