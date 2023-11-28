@@ -263,3 +263,8 @@ func _articlelistMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _articlecreateMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

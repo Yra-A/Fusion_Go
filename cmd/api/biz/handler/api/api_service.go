@@ -592,3 +592,36 @@ func ArticleList(ctx context.Context, c *app.RequestContext) {
 
 	handler.SendResponse(c, resp)
 }
+
+// ArticleCreate .
+// @router /fusion/article/create/ [POST]
+func ArticleCreate(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.ArticleCreateRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+
+	kresp, err := rpc.ArticleCreate(context.Background(), &article.ArticleCreateRequest{
+		ArticleId: req.ArticleID,
+		Title:     req.Title,
+		AuthorId:  req.AuthorID,
+		Author:    req.Author,
+		Link:      req.Link,
+		ContestId: req.ContestID,
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+
+	//将rpc层的响应转换为api层的响应
+	resp := new(api.ArticleCreateResponse)
+	resp.StatusCode = kresp.StatusCode
+	resp.StatusMsg = kresp.StatusMsg
+	resp.ArticleID = kresp.ArticleId
+
+	handler.SendResponse(c, resp)
+}

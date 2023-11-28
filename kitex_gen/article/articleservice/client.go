@@ -12,6 +12,7 @@ import (
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	ArticleList(ctx context.Context, req *article.ArticleListRequest, callOptions ...callopt.Option) (r *article.ArticleListResponse, err error)
+	ArticleCreate(ctx context.Context, req *article.ArticleCreateRequest, callOptions ...callopt.Option) (r *article.ArticleCreateResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -46,4 +47,9 @@ type kArticleServiceClient struct {
 func (p *kArticleServiceClient) ArticleList(ctx context.Context, req *article.ArticleListRequest, callOptions ...callopt.Option) (r *article.ArticleListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ArticleList(ctx, req)
+}
+
+func (p *kArticleServiceClient) ArticleCreate(ctx context.Context, req *article.ArticleCreateRequest, callOptions ...callopt.Option) (r *article.ArticleCreateResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ArticleCreate(ctx, req)
 }

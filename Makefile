@@ -10,6 +10,10 @@ run_user:
 run_contest:
 	cd cmd/contest && sh ./build.sh && sh ./output/bootstrap.sh
 
+## 启动 article 服务
+run_article:
+	cd cmd/article && sh ./build.sh && sh ./output/bootstrap.sh
+
 ## 启动 team 服务
 run_team:
 	cd cmd/team && sh ./build.sh && sh ./output/bootstrap.sh

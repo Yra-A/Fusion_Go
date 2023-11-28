@@ -31,3 +31,24 @@ func (s *ArticleServiceImpl) ArticleList(ctx context.Context, req *article.Artic
 	resp.ArticleList = c
 	return resp, nil
 }
+
+// ArticleCreate implements the ArticleServiceImpl interface.
+func (s *ArticleServiceImpl) ArticleCreate(ctx context.Context, req *article.ArticleCreateRequest) (resp *article.ArticleCreateResponse, err error) {
+	klog.CtxDebugf(ctx, "ArticleCreate called: %v", req.ArticleId)
+	resp = new(article.ArticleCreateResponse)
+	article_id, err := service.NewCreateArticleService(ctx).CreateArticle(req.ArticleId, req.Title, req.AuthorId, req.Author, req.Link, req.ContestId)
+	if err == errno.ArticleNotExistErr {
+		resp.StatusCode = errno.ArticleNotExistErr.ErrCode
+		resp.StatusMsg = errno.ArticleNotExistErr.ErrMsg
+		return resp, nil
+	}
+	if err != nil {
+		resp.StatusCode = errno.Fail.ErrCode
+		resp.StatusMsg = errno.Fail.ErrMsg
+		return resp, err
+	}
+	resp.ArticleId = article_id
+	resp.StatusCode = errno.Success.ErrCode
+	resp.StatusMsg = errno.Success.ErrMsg
+	return resp, nil
+}

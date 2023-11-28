@@ -19,7 +19,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "ArticleService"
 	handlerType := (*article.ArticleService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"ArticleList": kitex.NewMethodInfo(articleListHandler, newArticleServiceArticleListArgs, newArticleServiceArticleListResult, false),
+		"ArticleList":   kitex.NewMethodInfo(articleListHandler, newArticleServiceArticleListArgs, newArticleServiceArticleListResult, false),
+		"ArticleCreate": kitex.NewMethodInfo(articleCreateHandler, newArticleServiceArticleCreateArgs, newArticleServiceArticleCreateResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName":     "article",
@@ -54,6 +55,24 @@ func newArticleServiceArticleListResult() interface{} {
 	return article.NewArticleServiceArticleListResult()
 }
 
+func articleCreateHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*article.ArticleServiceArticleCreateArgs)
+	realResult := result.(*article.ArticleServiceArticleCreateResult)
+	success, err := handler.(article.ArticleService).ArticleCreate(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newArticleServiceArticleCreateArgs() interface{} {
+	return article.NewArticleServiceArticleCreateArgs()
+}
+
+func newArticleServiceArticleCreateResult() interface{} {
+	return article.NewArticleServiceArticleCreateResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -69,6 +88,16 @@ func (p *kClient) ArticleList(ctx context.Context, req *article.ArticleListReque
 	_args.Req = req
 	var _result article.ArticleServiceArticleListResult
 	if err = p.c.Call(ctx, "ArticleList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ArticleCreate(ctx context.Context, req *article.ArticleCreateRequest) (r *article.ArticleCreateResponse, err error) {
+	var _args article.ArticleServiceArticleCreateArgs
+	_args.Req = req
+	var _result article.ArticleServiceArticleCreateResult
+	if err = p.c.Call(ctx, "ArticleCreate", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
